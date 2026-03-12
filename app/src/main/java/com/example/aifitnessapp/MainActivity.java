@@ -1,24 +1,32 @@
 package com.example.aifitnessapp;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
+import com.example.aifitnessapp.ui.dashboard.DashboardActivity;
+import com.example.aifitnessapp.ui.onboarding.OnboardingActivity;
+import com.example.aifitnessapp.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        // No layout needed — this is just a router
+
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Observe: does a user profile exist in the DB?
+        viewModel.currentUser.observe(this, user -> {
+            if (user != null) {
+                // Profile exists → go to Dashboard
+                startActivity(new Intent(this, DashboardActivity.class));
+            } else {
+                // No profile → go to Onboarding
+                startActivity(new Intent(this, OnboardingActivity.class));
+            }
+            finish(); // Remove MainActivity from back stack
         });
     }
 }
