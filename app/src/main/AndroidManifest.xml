@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AIFitnessApp">
+
+        <!-- Router — decides where to send the user on launch -->
         <activity
-            android:name=".ui.onboarding.OnboardingActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +23,13 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.onboarding.OnboardingActivity"
             android:exported="false"/>
+
+        <activity
+            android:name=".ui.dashboard.DashboardActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
