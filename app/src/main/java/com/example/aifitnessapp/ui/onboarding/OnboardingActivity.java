@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
-import com.example.aifitnessapp.ui.MainActivity;
+import com.example.aifitnessapp.MainActivity;
 import com.example.aifitnessapp.viewmodel.OnboardingViewModel;
 
 public class OnboardingActivity extends AppCompatActivity {
