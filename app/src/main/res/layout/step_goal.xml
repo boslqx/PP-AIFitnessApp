@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Goal"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginBottom="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgGoal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="24dp">
+
+        <RadioButton
+            android:id="@+id/rbFatLoss"
+            style="@style/ActivityLevelOption"
+            android:text="🔥  Fat Loss — burn fat, get lean"
+            android:tag="fat_loss"/>
+
+        <RadioButton
+            android:id="@+id/rbMuscleGain"
+            style="@style/ActivityLevelOption"
+            android:text="💪  Muscle Gain — build strength and size"
+            android:tag="muscle_gain"/>
+
+        <RadioButton
+            android:id="@+id/rbEndurance"
+            style="@style/ActivityLevelOption"
+            android:text="🏃  Endurance — improve stamina and fitness"
+            android:tag="endurance"/>
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timeline"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginBottom="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgTimeline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb3Months"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="3 Months"
+            android:tag="3"
+            android:gravity="center"
+            android:button="@null"
+            android:background="@drawable/selector_gender_btn"
+            android:layout_marginEnd="8dp"/>
+
+        <RadioButton
+            android:id="@+id/rb6Months"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="6 Months"
+            android:tag="6"
+            android:gravity="center"
+            android:button="@null"
+            android:background="@drawable/selector_gender_btn"/>
+
+    </RadioGroup>
+
+</LinearLayout>
