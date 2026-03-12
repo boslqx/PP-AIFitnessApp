@@ -44,4 +44,12 @@ dependencies {
     // Room Database
     implementation("androidx.room:room-runtime:2.8.4")
     annotationProcessor("androidx.room:room-compiler:2.8.4")
+
+    // ViewModel + LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.8.7")
+    annotationProcessor("androidx.lifecycle:lifecycle-compiler:2.8.7")
+
+    // Activity KTX — gives you easy ViewModel access in Activities
+    implementation("androidx.activity:activity:1.11.0")
 }
