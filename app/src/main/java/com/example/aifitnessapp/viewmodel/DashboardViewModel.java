@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
+import com.example.aifitnessapp.data.model.ConsistencyScore;
 import com.example.aifitnessapp.data.model.DailyLog;
 import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.engine.ConsistencyEngine;
@@ -23,8 +24,8 @@ public class DashboardViewModel extends AndroidViewModel {
     public MutableLiveData<Float> consistencyScore = new MutableLiveData<>(0f);
     public MutableLiveData<String> aiInsight = new MutableLiveData<>("Loading your insights...");
     public MutableLiveData<String> burnoutRisk = new MutableLiveData<>("LOW");
-
     private FitAIDatabase db;
+    public MutableLiveData<Integer> streakCount = new MutableLiveData<>(0);
 
     public DashboardViewModel(@NonNull Application application) {
         super(application);
@@ -61,6 +62,13 @@ public class DashboardViewModel extends AndroidViewModel {
             consistencyScore.postValue(score);
             aiInsight.postValue(insight);
             burnoutRisk.postValue(risk);
+
+            int streak = 0;
+            for (ConsistencyScore s : last7Scores) {
+                if (s.score >= 50f) streak++;
+                else break;
+            }
+            streakCount.postValue(streak);
         });
     }
 

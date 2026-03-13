@@ -38,6 +38,10 @@
             android:name=".ui.log.LogSummaryActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.consistency.ConsistencyActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

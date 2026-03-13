@@ -104,6 +104,12 @@ public class DashboardActivity extends AppCompatActivity {
             pbConsistency.setProgress(rounded);
         });
 
+        viewModel.currentUser.observe(this, user -> {
+            if (user != null) {
+                viewModel.computeInsights(user.id);
+            }
+        });
+
         // Observe burnout risk
         viewModel.burnoutRisk.observe(this, risk -> {
             String label = "Burnout risk: " + risk;
@@ -121,6 +127,20 @@ public class DashboardActivity extends AppCompatActivity {
         // Observe AI insight message
         viewModel.aiInsight.observe(this, insight -> {
             tvAiInsight.setText(insight);
+        });
+
+        // Tap consistency card → open full breakdown
+        findViewById(R.id.pbConsistency).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
+
+        // Also make the score itself tappable
+        findViewById(R.id.tvConsistencyScore).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
+
+        viewModel.streakCount.observe(this, streak -> {
+            tvStreakBadge.setText("🔥 " + streak + " day streak");
         });
     }
 

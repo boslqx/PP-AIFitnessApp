@@ -13,6 +13,7 @@ import com.example.aifitnessapp.viewmodel.MainViewModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import com.example.aifitnessapp.repository.ConsistencyScoreRepository;
 
 public class LogSummaryActivity extends AppCompatActivity {
 
@@ -89,6 +90,10 @@ public class LogSummaryActivity extends AppCompatActivity {
             // Generate AI feedback based on all data
             tvAiFeedback.setText(generateFeedback(
                     calories, target, sleep, workout, mood, water));
+
+            ConsistencyScoreRepository scoreRepo =
+                    new ConsistencyScoreRepository(getApplication());
+            scoreRepo.computeAndSaveTodayScore(user.id);
         });
 
         // Navigate back to dashboard
