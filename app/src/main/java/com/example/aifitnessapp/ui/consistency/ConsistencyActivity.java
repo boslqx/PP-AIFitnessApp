@@ -121,7 +121,7 @@ public class ConsistencyActivity extends AppCompatActivity {
             column.setOrientation(LinearLayout.VERTICAL);
             column.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
             LinearLayout.LayoutParams colParams = new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.MATCH_HEIGHT, 1f);
+                    0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
             colParams.setMargins(4, 0, 4, 0);
             column.setLayoutParams(colParams);
 
