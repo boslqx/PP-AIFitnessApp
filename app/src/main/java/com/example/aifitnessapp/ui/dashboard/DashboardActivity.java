@@ -1,5 +1,6 @@
 package com.example.aifitnessapp.ui.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,6 +49,11 @@ public class DashboardActivity extends AppCompatActivity {
         tvAiInsight         = findViewById(R.id.tvAiInsight);
         pbConsistency       = findViewById(R.id.pbConsistency);
         pbCalories          = findViewById(R.id.pbCalories);
+
+        // Wire up Log button
+        findViewById(R.id.btnLogToday).setOnClickListener(v -> {
+            startActivity(new Intent(this, com.example.aifitnessapp.ui.log.LogActivity.class));
+        });
 
         // Static content that doesn't need DB
         String today = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(new Date());
