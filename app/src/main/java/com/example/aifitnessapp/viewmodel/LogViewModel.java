@@ -37,7 +37,7 @@ public class LogViewModel extends AndroidViewModel {
             int waterMl,
             String mood,
             String workoutType, int durationMinutes, int intensityLevel,
-            float aFloat) {
+            float weightKg) {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -54,6 +54,7 @@ public class LogViewModel extends AndroidViewModel {
             log.sleepQuality     = sleepQuality;
             log.waterMl          = waterMl;
             log.mood             = mood;
+            log.weightKg = weightKg;
             log.loggedAt         = System.currentTimeMillis();
             db.dailyLogDao().insert(log);
 

@@ -42,6 +42,10 @@
             android:name=".ui.consistency.ConsistencyActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.progress.ProgressActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
