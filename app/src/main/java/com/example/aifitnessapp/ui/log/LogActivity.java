@@ -30,6 +30,7 @@ public class LogActivity extends AppCompatActivity {
 
     // Mood
     private RadioGroup rgMood;
+    private TextInputEditText etWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,8 @@ public class LogActivity extends AppCompatActivity {
                     getSelectedTag(rgMood),
                     getSelectedTag(rgWorkoutType),
                     getInt(etDuration),
-                    getIntTag(rgIntensity)
+                    getIntTag(rgIntensity),
+                    getFloat(etWeight)
             );
         });
     }
@@ -97,6 +99,7 @@ public class LogActivity extends AppCompatActivity {
         rgSleepQuality = findViewById(R.id.rgSleepQuality);
         etWater        = findViewById(R.id.etWater);
         rgMood         = findViewById(R.id.rgMood);
+        etWeight = findViewById(R.id.etWeight);
     }
 
     private boolean validate() {

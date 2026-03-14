@@ -36,8 +36,8 @@ public class LogViewModel extends AndroidViewModel {
             int sleepHours, int sleepQuality,
             int waterMl,
             String mood,
-            String workoutType, int durationMinutes, int intensityLevel
-    ) {
+            String workoutType, int durationMinutes, int intensityLevel,
+            float aFloat) {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         AppExecutors.getInstance().diskIO().execute(() -> {
