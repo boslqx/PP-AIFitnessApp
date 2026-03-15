@@ -50,6 +50,10 @@
             android:name=".ui.workout.WorkoutHistoryActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.habit.HabitTrackerActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
