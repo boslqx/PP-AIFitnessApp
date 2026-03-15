@@ -59,6 +59,10 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this,
                         com.example.aifitnessapp.ui.progress.ProgressActivity.class)));
 
+        findViewById(R.id.btnWorkoutHistory).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        com.example.aifitnessapp.ui.workout.WorkoutHistoryActivity.class)));
+
         // Static content that doesn't need DB
         String today = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(new Date());
         tvGreeting.setText(viewModel.getGreeting() + "! 👋");
