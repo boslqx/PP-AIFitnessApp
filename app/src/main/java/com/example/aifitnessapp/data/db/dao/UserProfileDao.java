@@ -24,4 +24,7 @@ public interface UserProfileDao {
     @Query("SELECT * FROM user_profile LIMIT 1")
     LiveData<UserProfile> getCurrentUser();
     // LIMIT 1 because Phase 1 supports only one user profile
+
+    @Query("SELECT * FROM user_profile WHERE id = :userId LIMIT 1")
+    UserProfile getUserByIdSync(int userId);
 }

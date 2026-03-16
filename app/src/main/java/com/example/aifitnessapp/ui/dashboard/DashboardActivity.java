@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
+import com.example.aifitnessapp.ui.plan.WorkoutPlanActivity;
 import com.example.aifitnessapp.viewmodel.DashboardViewModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,6 +71,10 @@ public class DashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnSettings).setOnClickListener(v ->
                 startActivity(new Intent(this,
                         com.example.aifitnessapp.ui.settings.SettingsActivity.class)));
+
+        findViewById(R.id.btnMyPlan).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        WorkoutPlanActivity.class)));
 
         // Static content that doesn't need DB
         String today = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(new Date());

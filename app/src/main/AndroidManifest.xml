@@ -58,6 +58,10 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.WorkoutPlanActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
