@@ -2,6 +2,7 @@ package com.example.aifitnessapp.ui.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,25 +37,22 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        tvGreeting          = findViewById(R.id.tvGreeting);
-        tvDate              = findViewById(R.id.tvDate);
-        tvGoalSummary       = findViewById(R.id.tvGoalSummary);
-        tvConsistencyScore  = findViewById(R.id.tvConsistencyScore);
-        tvStreakBadge       = findViewById(R.id.tvStreakBadge);
-        tvBurnoutRisk       = findViewById(R.id.tvBurnoutRisk);
-        tvCaloriesEaten     = findViewById(R.id.tvCaloriesEaten);
-        tvCaloriesTarget    = findViewById(R.id.tvCaloriesTarget);
-        tvProtein           = findViewById(R.id.tvProtein);
-        tvCarbs             = findViewById(R.id.tvCarbs);
-        tvFat               = findViewById(R.id.tvFat);
-        tvAiInsight         = findViewById(R.id.tvAiInsight);
-        pbConsistency       = findViewById(R.id.pbConsistency);
-        pbCalories          = findViewById(R.id.pbCalories);
+        tvGreeting         = findViewById(R.id.tvGreeting);
+        tvDate             = findViewById(R.id.tvDate);
+        tvGoalSummary      = findViewById(R.id.tvGoalSummary);
+        tvConsistencyScore = findViewById(R.id.tvConsistencyScore);
+        tvStreakBadge      = findViewById(R.id.tvStreakBadge);
+        tvBurnoutRisk      = findViewById(R.id.tvBurnoutRisk);
+        tvCaloriesEaten    = findViewById(R.id.tvCaloriesEaten);
+        tvCaloriesTarget   = findViewById(R.id.tvCaloriesTarget);
+        tvProtein          = findViewById(R.id.tvProtein);
+        tvCarbs            = findViewById(R.id.tvCarbs);
+        tvFat              = findViewById(R.id.tvFat);
+        tvAiInsight        = findViewById(R.id.tvAiInsight);
+        pbConsistency      = findViewById(R.id.pbConsistency);
+        pbCalories         = findViewById(R.id.pbCalories);
 
-        // Wire up Log button
-        findViewById(R.id.btnLogToday).setOnClickListener(v -> {
-            startActivity(new Intent(this, com.example.aifitnessapp.ui.log.LogActivity.class));
-        });
+                        com.example.aifitnessapp.ui.log.LogActivity.class)));
 
         findViewById(R.id.btnViewProgress).setOnClickListener(v ->
                 startActivity(new Intent(this,
@@ -73,96 +71,106 @@ public class DashboardActivity extends AppCompatActivity {
                         com.example.aifitnessapp.ui.settings.SettingsActivity.class)));
 
         findViewById(R.id.btnMyPlan).setOnClickListener(v ->
-                startActivity(new Intent(this,
-                        WorkoutPlanActivity.class)));
+                startActivity(new Intent(this, WorkoutPlanActivity.class)));
 
-        // Static content that doesn't need DB
-        String today = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(new Date());
+        findViewById(R.id.pbConsistency).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
+
+        findViewById(R.id.tvConsistencyScore).setOnClickListener(v ->
+                startActivity(new Intent(this,
+                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
+
+        String today = new SimpleDateFormat("EEEE, MMMM d",
+                Locale.getDefault()).format(new Date());
         tvGreeting.setText(viewModel.getGreeting() + "! 👋");
         tvDate.setText(today);
     }
 
     private void observeData() {
 
-        // Observe user profile — updates greeting and goal summary
+        /*
+         * EVERYTHING that needs userId lives inside this one observer.
+         * currentUser delivers once when the DB returns the profile.
+         * We then:
+         *   1. Update the greeting + goal summary
+         *   2. Initialize todayLog with the REAL userId (not hardcoded 1)
+         *   3. Observe todayLog for nutrition data
+         *   4. Kick off the AI insight computation
+         */
         viewModel.currentUser.observe(this, user -> {
             if (user == null) return;
 
+            // 1. Greeting + goal
             tvGreeting.setText(viewModel.getGreeting() + ", " + user.name + "! 👋");
-
             String goalLabel = formatGoal(user.fitnessGoal);
             tvGoalSummary.setText(goalLabel + " · " + user.dailyCalorieTarget + " kcal target");
 
-            // Now that we have userId, compute AI insights
-            viewModel.computeInsights(user.id);
-        });
+            // 2. Init todayLog with real userId
+            viewModel.initTodayLog(user.id);
 
-        // Observe today's nutrition log
-        viewModel.todayLog.observe(this, log -> {
-            if (log == null) {
-                // No log yet today — show zeros
-                tvCaloriesEaten.setText("0 kcal eaten");
-                updateMacros(0, 0, 0);
-                return;
-            }
-            tvCaloriesEaten.setText(log.caloriesConsumed + " kcal eaten");
-            updateMacros((int) log.proteinGrams, (int) log.carbsGrams, (int) log.fatGrams);
-
-            // Update calorie progress bar against target
-            viewModel.currentUser.observe(this, user -> {
-                if (user != null && user.dailyCalorieTarget > 0) {
+            // 3. Observe todayLog — this is now set up AFTER initTodayLog
+            //    so we are guaranteed to observe the correct LiveData object
+            viewModel.todayLog.observe(this, log -> {
+                if (log == null) {
+                    tvCaloriesEaten.setText("0 kcal eaten");
                     tvCaloriesTarget.setText("/ " + user.dailyCalorieTarget + " target");
-                    int pct = (int) ((log.caloriesConsumed / (float) user.dailyCalorieTarget) * 100);
+                    pbCalories.setProgress(0);
+                    updateMacros(0, 0, 0);
+                    return;
+                }
+                tvCaloriesEaten.setText(log.caloriesConsumed + " kcal eaten");
+                updateMacros((int) log.proteinGrams,
+                        (int) log.carbsGrams,
+                        (int) log.fatGrams);
+
+                if (user.dailyCalorieTarget > 0) {
+                    tvCaloriesTarget.setText("/ " + user.dailyCalorieTarget + " target");
+                    int pct = (int) ((log.caloriesConsumed
+                            / (float) user.dailyCalorieTarget) * 100);
                     pbCalories.setProgress(Math.min(pct, 100));
                 }
             });
+
+            // 4. AI insights
+            viewModel.computeInsights(user.id);
         });
 
-        // Observe AI-computed consistency score
+        // These don't need userId so they can live outside
         viewModel.consistencyScore.observe(this, score -> {
             int rounded = Math.round(score);
             tvConsistencyScore.setText(String.valueOf(rounded));
             pbConsistency.setProgress(rounded);
         });
 
-        // Observe burnout risk
         viewModel.burnoutRisk.observe(this, risk -> {
-            String label = "Burnout risk: " + risk;
-            tvBurnoutRisk.setText(label);
-            // Change color based on risk level
+            tvBurnoutRisk.setText("Burnout risk: " + risk);
             int color;
             switch (risk) {
-                case "HIGH":   color = 0xFFD32F2F; break; // red
-                case "MEDIUM": color = 0xFFF57F17; break; // amber
-                default:       color = 0xFF757575; break; // grey
+                case "HIGH":   color = 0xFFD32F2F; break;
+                case "MEDIUM": color = 0xFFF57F17; break;
+                default:       color = 0xFF757575; break;
             }
             tvBurnoutRisk.setTextColor(color);
         });
 
-        // Observe AI insight message
-        viewModel.aiInsight.observe(this, insight -> {
-            tvAiInsight.setText(insight);
-        });
-
-        // Tap consistency card → open full breakdown
-        findViewById(R.id.pbConsistency).setOnClickListener(v ->
-                startActivity(new Intent(this,
-                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
-
-        // Also make the score itself tappable
-        findViewById(R.id.tvConsistencyScore).setOnClickListener(v ->
-                startActivity(new Intent(this,
-                        com.example.aifitnessapp.ui.consistency.ConsistencyActivity.class)));
+        viewModel.aiInsight.observe(this, insight ->
+                tvAiInsight.setText(insight));
 
         viewModel.streakCount.observe(this, streak -> {
-            tvStreakBadge.setText("🔥 " + streak + " day streak");
+            if (streak > 0) {
+                tvStreakBadge.setVisibility(View.VISIBLE);
+                tvStreakBadge.setText("🔥 " + streak + " day streak");
+            } else {
+                tvStreakBadge.setVisibility(View.INVISIBLE);
+            }
         });
     }
 
     private void updateMacros(int protein, int carbs, int fat) {
         tvProtein.setText("Protein\n" + protein + "g");
-        tvCarbs.setText("Carbs\n"   + carbs   + "g");
-        tvFat.setText("Fat\n"       + fat      + "g");
+        tvCarbs.setText("Carbs\n"    + carbs    + "g");
+        tvFat.setText("Fat\n"        + fat       + "g");
     }
 
     private String formatGoal(String goal) {

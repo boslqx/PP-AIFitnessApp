@@ -33,8 +33,12 @@ public class DashboardViewModel extends AndroidViewModel {
 
         // These are LiveData — Room delivers updates automatically on any DB change
         currentUser = db.userProfileDao().getCurrentUser();
-        todayLog    = db.dailyLogDao().getLogByDate(1, getTodayDate());
+        // todayLog    = db.dailyLogDao().getLogByDate(1, getTodayDate());
         // Note: userId=1 hardcoded for Phase 1 (single user)
+    }
+
+    public void initTodayLog(int userId) {
+        todayLog = db.dailyLogDao().getLogByDate(userId, getTodayDate());
     }
 
     // Called once after user data loads, to compute AI insights
