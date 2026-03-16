@@ -59,7 +59,7 @@
             android:exported="false"/>
 
         <activity
-            android:name=".ui.WorkoutPlanActivity"
+            android:name=".ui.plan.WorkoutPlanActivity"
             android:exported="false"/>
 
     </application>
