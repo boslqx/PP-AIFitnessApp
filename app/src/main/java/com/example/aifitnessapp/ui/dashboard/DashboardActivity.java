@@ -1,5 +1,6 @@
 package com.example.aifitnessapp.ui.dashboard;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,8 @@ import com.example.aifitnessapp.viewmodel.DashboardViewModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import android.animation.ObjectAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -24,6 +27,7 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvProtein, tvCarbs, tvFat;
     private TextView tvAiInsight;
     private ProgressBar pbConsistency, pbCalories;
+    Animator animation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class DashboardActivity extends AppCompatActivity {
         pbConsistency      = findViewById(R.id.pbConsistency);
         pbCalories         = findViewById(R.id.pbCalories);
 
+        findViewById(R.id.btnLogToday).setOnClickListener(v ->
+                startActivity(new Intent(this,
                         com.example.aifitnessapp.ui.log.LogActivity.class)));
 
         findViewById(R.id.btnViewProgress).setOnClickListener(v ->
@@ -128,7 +134,10 @@ public class DashboardActivity extends AppCompatActivity {
                     tvCaloriesTarget.setText("/ " + user.dailyCalorieTarget + " target");
                     int pct = (int) ((log.caloriesConsumed
                             / (float) user.dailyCalorieTarget) * 100);
-                    pbCalories.setProgress(Math.min(pct, 100));
+                    ObjectAnimator calAnim = ObjectAnimator.ofInt(pbCalories, "progress", 0, Math.min(pct, 100));
+                    calAnim.setDuration(800);
+                    calAnim.setInterpolator(new DecelerateInterpolator());
+                    calAnim.start();
                 }
             });
 
@@ -141,6 +150,9 @@ public class DashboardActivity extends AppCompatActivity {
             int rounded = Math.round(score);
             tvConsistencyScore.setText(String.valueOf(rounded));
             pbConsistency.setProgress(rounded);
+            animation.setDuration(1000);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
         });
 
         viewModel.burnoutRisk.observe(this, risk -> {
