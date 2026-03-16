@@ -125,12 +125,6 @@ public class DashboardActivity extends AppCompatActivity {
             pbConsistency.setProgress(rounded);
         });
 
-        viewModel.currentUser.observe(this, user -> {
-            if (user != null) {
-                viewModel.computeInsights(user.id);
-            }
-        });
-
         // Observe burnout risk
         viewModel.burnoutRisk.observe(this, risk -> {
             String label = "Burnout risk: " + risk;
