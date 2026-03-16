@@ -73,7 +73,7 @@ public class OnboardingActivity extends AppCompatActivity {
 
         // Observe save success — navigate to dashboard when done
         viewModel.saveSuccess.observe(this, success -> {
-            if (success) {
+            if (success == null || !success) return; {
                 startActivity(new Intent(this, MainActivity.class));
                 finish(); // prevent going back to onboarding
             }

@@ -15,7 +15,7 @@ public class OnboardingViewModel extends AndroidViewModel {
     // MutableLiveData holds the in-progress profile as user fills each step
     // The UI observes this — no need to pass data manually between steps
     public MutableLiveData<UserProfile> draftProfile = new MutableLiveData<>(new UserProfile());
-    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(false);
+    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(null);
 
     public OnboardingViewModel(@NonNull Application application) {
         super(application);

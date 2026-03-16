@@ -51,7 +51,7 @@ public class LogActivity extends AppCompatActivity {
 
         // Observe save → navigate to summary
         viewModel.saveSuccess.observe(this, success -> {
-            if (success) {
+            if (success == null || !success) return; {
                 Intent intent = new Intent(this, LogSummaryActivity.class);
                 // Pass all logged values to the summary screen
                 intent.putExtra("calories",   getInt(etCalories));

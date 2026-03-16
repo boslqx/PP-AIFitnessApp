@@ -19,7 +19,7 @@ public class LogViewModel extends AndroidViewModel {
     private FitAIDatabase db;
 
     public LiveData<UserProfile> currentUser;
-    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(false);
+    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(null);
 
     // Holds the saved log ID so SummaryActivity can load it
     public MutableLiveData<Integer> savedLogId = new MutableLiveData<>(-1);

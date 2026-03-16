@@ -14,7 +14,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private UserRepository repository;
 
     public LiveData<UserProfile> currentUser;
-    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(false);
+    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(null);
 
     /*
      * Live preview of recalculated targets — updates as user changes fields.

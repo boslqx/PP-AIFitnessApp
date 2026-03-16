@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Observe save success
         viewModel.saveSuccess.observe(this, success -> {
-            if (success) {
+            if (success == null || !success) return; {
                 Toast.makeText(this,
                         "Settings saved! Targets recalculated. ✅",
                         Toast.LENGTH_SHORT).show();
