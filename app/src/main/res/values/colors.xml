@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Brand + semantic palette (Material 3 friendly) -->
+    <color name="md_theme_primary">#3559E0</color>
+    <color name="md_theme_onPrimary">#FFFFFFFF</color>
+    <color name="md_theme_primaryContainer">#DEE4FF</color>
+    <color name="md_theme_onPrimaryContainer">#001453</color>
+
+    <color name="md_theme_surface">#F8F9FD</color>
+    <color name="md_theme_surfaceContainer">#EEF1FA</color>
+    <color name="md_theme_onSurface">#1A1C1E</color>
+    <color name="md_theme_onSurfaceVariant">#5B616E</color>
+    <color name="md_theme_outlineVariant">#DCE1EC</color>
 </resources>
