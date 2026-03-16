@@ -1,6 +1,5 @@
 package com.example.aifitnessapp.ui.dashboard;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -27,7 +26,6 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvProtein, tvCarbs, tvFat;
     private TextView tvAiInsight;
     private ProgressBar pbConsistency, pbCalories;
-    Animator animation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +147,7 @@ public class DashboardActivity extends AppCompatActivity {
         viewModel.consistencyScore.observe(this, score -> {
             int rounded = Math.round(score);
             tvConsistencyScore.setText(String.valueOf(rounded));
-            pbConsistency.setProgress(rounded);
+            ObjectAnimator animation = ObjectAnimator.ofInt(pbConsistency, "progress", 0, rounded);
             animation.setDuration(1000);
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
