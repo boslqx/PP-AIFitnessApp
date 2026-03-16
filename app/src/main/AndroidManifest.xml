@@ -54,6 +54,10 @@
             android:name=".ui.habit.HabitTrackerActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
