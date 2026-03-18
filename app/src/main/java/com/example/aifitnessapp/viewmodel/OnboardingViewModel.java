@@ -10,6 +10,7 @@ import com.example.aifitnessapp.util.AppExecutors;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import com.example.aifitnessapp.repository.PlanRepository;
 
 public class OnboardingViewModel extends AndroidViewModel {
 
@@ -33,7 +34,18 @@ public class OnboardingViewModel extends AndroidViewModel {
         prefs.updatedAt = prefs.createdAt;
 
         AppExecutors.getInstance().diskIO().execute(() -> {
+            // 1. Save preferences
             db.userPreferencesDao().insert(prefs);
+
+            // 2. Fetch the saved prefs (need the auto-generated id)
+            UserPreferences saved = db.userPreferencesDao().getCurrentUserSync();
+
+            // 3. Generate first 7-day plan immediately
+            if (saved != null) {
+                PlanRepository planRepo = new PlanRepository(getApplication());
+                planRepo.generateFirstPlan(saved.id);
+            }
+
             saveSuccess.postValue(true);
         });
     }
