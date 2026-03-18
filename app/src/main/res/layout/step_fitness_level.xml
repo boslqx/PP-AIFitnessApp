@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/rgFitnessLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton android:id="@+id/rbBeginner"
+            style="@style/ActivityLevelOption"
+            android:text="🌱  Beginner — new to regular exercise"
+            android:tag="BEGINNER"/>
+
+        <RadioButton android:id="@+id/rbIntermediate"
+            style="@style/ActivityLevelOption"
+            android:text="💪  Intermediate — exercise regularly for 6+ months"
+            android:tag="INTERMEDIATE"/>
+
+        <RadioButton android:id="@+id/rbAdvanced"
+            style="@style/ActivityLevelOption"
+            android:text="🔥  Advanced — training seriously for 2+ years"
+            android:tag="ADVANCED"/>
+
+    </RadioGroup>
+
+</LinearLayout>

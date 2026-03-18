@@ -1,0 +1,40 @@
+package com.example.aifitnessapp.viewmodel;
+
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+import com.example.aifitnessapp.data.db.FitAIDatabase;
+import com.example.aifitnessapp.data.model.UserPreferences;
+import com.example.aifitnessapp.util.AppExecutors;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class OnboardingViewModel extends AndroidViewModel {
+
+    private FitAIDatabase db;
+
+    public MutableLiveData<UserPreferences> draftProfile =
+            new MutableLiveData<>(new UserPreferences());
+    public MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>(null);
+
+    public OnboardingViewModel(@NonNull Application application) {
+        super(application);
+        db = FitAIDatabase.getInstance(application);
+    }
+
+    public void finalizeAndSave() {
+        UserPreferences prefs = draftProfile.getValue();
+        if (prefs == null) return;
+
+        prefs.createdAt = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        prefs.updatedAt = prefs.createdAt;
+
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            db.userPreferencesDao().insert(prefs);
+            saveSuccess.postValue(true);
+        });
+    }
+}

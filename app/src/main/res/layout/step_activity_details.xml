@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- GYM SECTION -->
+    <LinearLayout
+        android:id="@+id/sectionGym"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏋️  What equipment do you have at the gym?"
+            android:textSize="14sp"
+            android:textColor="#424242"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <RadioGroup
+            android:id="@+id/rgGymEquipment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton android:id="@+id/rbFullGym"
+                style="@style/ActivityLevelOption"
+                android:text="Full gym — all machines and free weights"
+                android:tag="FULL_GYM"/>
+
+            <RadioButton android:id="@+id/rbDumbbells"
+                style="@style/ActivityLevelOption"
+                android:text="Dumbbells only"
+                android:tag="DUMBBELLS"/>
+
+            <RadioButton android:id="@+id/rbBarbellRack"
+                style="@style/ActivityLevelOption"
+                android:text="Barbell + rack"
+                android:tag="BARBELL_RACK"/>
+
+            <RadioButton android:id="@+id/rbMachines"
+                style="@style/ActivityLevelOption"
+                android:text="Machines only"
+                android:tag="MACHINES"/>
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- RUNNING SECTION -->
+    <LinearLayout
+        android:id="@+id/sectionRunning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏃  Running preferences"
+            android:textSize="14sp"
+            android:textColor="#424242"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <CheckBox
+            android:id="@+id/cbTracksRunning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="I track my running pace (GPS / watch)"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <!-- SPORTS SECTION -->
+    <LinearLayout
+        android:id="@+id/sectionSports"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚽  Which sports do you play?"
+            android:textSize="14sp"
+            android:textColor="#424242"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. Basketball, Football, Tennis">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

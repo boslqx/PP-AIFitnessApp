@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/rgGoal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton android:id="@+id/rbLoseFat"
+            style="@style/ActivityLevelOption"
+            android:text="🔥  Lose Fat — burn fat, get lean"
+            android:tag="LOSE_FAT"/>
+
+        <RadioButton android:id="@+id/rbBuildMuscle"
+            style="@style/ActivityLevelOption"
+            android:text="💪  Build Muscle — get stronger and bigger"
+            android:tag="BUILD_MUSCLE"/>
+
+        <RadioButton android:id="@+id/rbEndurance"
+            style="@style/ActivityLevelOption"
+            android:text="🏃  Improve Endurance — go longer, go harder"
+            android:tag="ENDURANCE"/>
+
+        <RadioButton android:id="@+id/rbGeneral"
+            style="@style/ActivityLevelOption"
+            android:text="⚡  General Fitness — stay healthy and active"
+            android:tag="GENERAL"/>
+
+    </RadioGroup>
+
+</LinearLayout>

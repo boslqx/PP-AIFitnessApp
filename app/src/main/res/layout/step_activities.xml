@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <CheckBox android:id="@+id/cbGym"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🏋️  Gym" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbRunning"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🏃  Running / Jogging" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbBouldering"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🧗  Bouldering / Climbing" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbCycling"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🚴  Cycling" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbSwimming"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🏊  Swimming" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbYoga"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🧘  Yoga / Stretching" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbHome"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="🏠  Home Workouts" android:textSize="15sp"
+        android:paddingStart="8dp" android:layout_marginBottom="8dp"/>
+
+    <CheckBox android:id="@+id/cbSports"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="⚽  Sports" android:textSize="15sp"
+        android:paddingStart="8dp"/>
+
+</LinearLayout>

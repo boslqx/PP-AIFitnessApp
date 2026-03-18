@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/rgDaysPerWeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton android:id="@+id/rb2Days"
+            style="@style/ActivityLevelOption"
+            android:text="2 days — just getting started"
+            android:tag="2"/>
+
+        <RadioButton android:id="@+id/rb3Days"
+            style="@style/ActivityLevelOption"
+            android:text="3 days — solid and sustainable"
+            android:tag="3"/>
+
+        <RadioButton android:id="@+id/rb4Days"
+            style="@style/ActivityLevelOption"
+            android:text="4 days — committed"
+            android:tag="4"/>
+
+        <RadioButton android:id="@+id/rb5Days"
+            style="@style/ActivityLevelOption"
+            android:text="5 days — serious about it"
+            android:tag="5"/>
+
+        <RadioButton android:id="@+id/rb6Days"
+            style="@style/ActivityLevelOption"
+            android:text="6 days — all in 🔥"
+            android:tag="6"/>
+
+    </RadioGroup>
+
+</LinearLayout>
