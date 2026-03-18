@@ -7,7 +7,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.example.aifitnessapp.R;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.engine.CalorieCalculator;
 import com.example.aifitnessapp.viewmodel.OnboardingViewModel;
 

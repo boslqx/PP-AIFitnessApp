@@ -1,10 +1,8 @@
 package com.example.aifitnessapp.engine;
 
-import com.example.aifitnessapp.data.model.ConsistencyScore;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.data.model.WorkoutPlan;
 import com.example.aifitnessapp.data.model.WorkoutPlanDay;
-import com.example.aifitnessapp.data.model.WorkoutSession;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;

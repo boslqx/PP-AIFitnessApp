@@ -2,10 +2,7 @@ package com.example.aifitnessapp.repository;
 
 import android.app.Application;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.model.ConsistencyScore;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.data.model.WorkoutPlan;
-import com.example.aifitnessapp.data.model.WorkoutSession;
 import com.example.aifitnessapp.engine.WorkoutPlanEngine;
 import java.util.List;
 

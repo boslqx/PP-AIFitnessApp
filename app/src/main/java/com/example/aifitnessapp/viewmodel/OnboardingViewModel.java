@@ -4,7 +4,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import com.example.aifitnessapp.data.model.UserProfile;
+
 import com.example.aifitnessapp.engine.CalorieCalculator;
 import com.example.aifitnessapp.repository.UserRepository;
 

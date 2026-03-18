@@ -8,7 +8,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.example.aifitnessapp.R;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.viewmodel.OnboardingViewModel;
 
 public class StepGoal implements OnboardingStep {

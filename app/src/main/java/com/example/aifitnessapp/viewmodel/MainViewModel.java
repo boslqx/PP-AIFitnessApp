@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.model.UserProfile;
 
 public class MainViewModel extends AndroidViewModel {
 

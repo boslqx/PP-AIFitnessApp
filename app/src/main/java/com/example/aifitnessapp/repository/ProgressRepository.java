@@ -2,8 +2,7 @@ package com.example.aifitnessapp.repository;
 
 import android.app.Application;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.db.dao.DailyLogDao;
-import com.example.aifitnessapp.data.model.DailyLog;
+
 import java.util.List;
 
 public class ProgressRepository {

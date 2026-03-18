@@ -3,8 +3,7 @@ package com.example.aifitnessapp.repository;
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.db.dao.WorkoutSessionDao;
-import com.example.aifitnessapp.data.model.WorkoutSession;
+
 import java.util.List;
 
 public class WorkoutHistoryRepository {

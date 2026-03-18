@@ -3,8 +3,6 @@ package com.example.aifitnessapp.repository;
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.db.dao.HabitLogDao;
-import com.example.aifitnessapp.data.model.HabitLog;
 import com.example.aifitnessapp.util.AppExecutors;
 import java.util.List;
 

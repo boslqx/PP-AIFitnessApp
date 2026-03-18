@@ -1,43 +1,43 @@
 package com.example.aifitnessapp.data.db;
 
 import android.content.Context;
-import androidx.room.*;
-import com.example.aifitnessapp.data.model.*;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 import com.example.aifitnessapp.data.db.dao.*;
+import com.example.aifitnessapp.data.model.*;
 
 @Database(
         entities = {
-                UserProfile.class,
-                DailyLog.class,
-                WorkoutSession.class,
-                HabitLog.class,
-                ConsistencyScore.class
+                UserPreferences.class,
+                PlannedWorkout.class,
+                WorkoutLog.class
         },
-        version = 1,
-        exportSchema = true
+        version = 2,
+        exportSchema = false
 )
 public abstract class FitAIDatabase extends RoomDatabase {
 
-    // Abstract methods — Room implements these automatically
-    public abstract UserProfileDao userProfileDao();
-    public abstract DailyLogDao dailyLogDao();
-    public abstract WorkoutSessionDao workoutSessionDao();
-    public abstract HabitLogDao habitLogDao();
-    public abstract ConsistencyScoreDao consistencyScoreDao();
+    private static volatile FitAIDatabase INSTANCE;
 
-    // Singleton: only ONE database instance for the entire app
-    private static volatile FitAIDatabase instance;
+    public abstract UserPreferencesDao userPreferencesDao();
+    public abstract PlannedWorkoutDao plannedWorkoutDao();
+    public abstract WorkoutLogDao workoutLogDao();
 
-    public static synchronized FitAIDatabase getInstance(Context context) {
-        if (instance == null) {
-            instance = Room.databaseBuilder(
-                            context.getApplicationContext(),  // use app context, NOT activity context
-                            FitAIDatabase.class,
-                            "fitai_database"                  // filename on device storage
-                    )
-                    .fallbackToDestructiveMigration()     // Dev only: wipes DB on schema change
-                    .build();
+    public static FitAIDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (FitAIDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(
+                                    context.getApplicationContext(),
+                                    FitAIDatabase.class,
+                                    "fitai_database"
+                            )
+                            .fallbackToDestructiveMigration()
+                            .build();
+                }
+            }
         }
-        return instance;
+        return INSTANCE;
     }
 }

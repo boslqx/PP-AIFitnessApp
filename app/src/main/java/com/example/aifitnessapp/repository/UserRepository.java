@@ -3,8 +3,6 @@ package com.example.aifitnessapp.repository;
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.db.dao.UserProfileDao;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.util.AppExecutors;
 
 public class UserRepository {

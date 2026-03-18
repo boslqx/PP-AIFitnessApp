@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
-import com.example.aifitnessapp.data.model.HabitLog;
 import com.example.aifitnessapp.ui.dashboard.DashboardActivity;
 import com.example.aifitnessapp.viewmodel.HabitViewModel;
 import com.google.android.material.textfield.TextInputEditText;

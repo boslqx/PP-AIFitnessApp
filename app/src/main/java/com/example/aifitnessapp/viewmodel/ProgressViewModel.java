@@ -6,8 +6,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.aifitnessapp.data.db.FitAIDatabase;
-import com.example.aifitnessapp.data.model.DailyLog;
-import com.example.aifitnessapp.data.model.UserProfile;
 import com.example.aifitnessapp.repository.ProgressRepository;
 import com.example.aifitnessapp.util.AppExecutors;
 import java.text.SimpleDateFormat;
