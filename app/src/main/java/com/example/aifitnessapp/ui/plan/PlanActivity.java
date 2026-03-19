@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.data.model.PlannedWorkout;
@@ -29,6 +31,8 @@ public class PlanActivity extends AppCompatActivity {
     private MaterialButton btnBackFromPlan;
 
     private int currentUserId = -1;
+    public LiveData<List<PlannedWorkout>> weekPlan =
+            new MutableLiveData<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,36 +49,34 @@ public class PlanActivity extends AppCompatActivity {
             viewModel.loadPlan(user.id);
         });
 
-        // Once plan is ready, load the week data
         viewModel.planReady.observe(this, ready -> {
             if (!ready || currentUserId == -1) return;
+
+            // Init week plan LiveData FIRST
             viewModel.initWeekPlan(currentUserId);
             viewModel.loadLogMap(currentUserId);
-
-            // Build summary label
             loadWeekDates(currentUserId);
-        });
 
-        // Render plan days when LiveData delivers
-        viewModel.weekPlan.observe(this, plans -> {
-            if (plans == null || plans.isEmpty()) return;
+            // NOW it's safe to observe weekPlan — it's been assigned
+            viewModel.weekPlan.observe(this, plans -> {
+                if (plans == null || plans.isEmpty()) return;
 
-            // Get week number on background thread then render
-            new Thread(() -> {
-                int weekNum = viewModel.getCurrentWeekNum(currentUserId);
-                runOnUiThread(() -> {
-                    viewModel.buildSummary(plans, weekNum);
-                    renderPlan(plans);
-                });
-            }).start();
-        });
+                new Thread(() -> {
+                    int weekNum = viewModel.getCurrentWeekNum(currentUserId);
+                    runOnUiThread(() -> {
+                        viewModel.buildSummary(plans, weekNum);
+                        renderPlan(plans);
+                    });
+                }).start();
+            });
 
-        // Observe log map — re-render when logs change
-        viewModel.logMap.observe(this, map -> {
-            List<PlannedWorkout> plans = viewModel.weekPlan.getValue();
-            if (plans != null && !plans.isEmpty()) {
-                renderPlan(plans);
-            }
+            // Observe log map — re-render when logs update
+            viewModel.logMap.observe(this, map -> {
+                if (viewModel.weekPlan.getValue() != null
+                        && !viewModel.weekPlan.getValue().isEmpty()) {
+                    renderPlan(viewModel.weekPlan.getValue());
+                }
+            });
         });
 
         // Summary label
