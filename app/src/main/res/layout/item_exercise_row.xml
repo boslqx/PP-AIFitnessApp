@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -14,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:buttonTint="@color/md_theme_primary"/>
+        android:buttonTint="@color/md_theme_primary" />
 
     <!-- Exercise name -->
     <TextView
@@ -24,7 +25,7 @@
         android:layout_weight="1"
         android:text="Squat"
         android:textSize="14sp"
-        android:textColor="#212121"/>
+        android:textColor="#212121" />
 
     <!-- Sets/reps — tappable to edit -->
     <TextView
@@ -35,7 +36,7 @@
         android:textSize="13sp"
         android:textColor="@color/md_theme_primary"
         android:textStyle="bold"
-        android:layout_marginEnd="8dp"/>
+        android:layout_marginEnd="8dp" />
 
     <!-- Edit button -->
     <ImageView
@@ -44,8 +45,8 @@
         android:layout_height="32dp"
         android:src="@android:drawable/ic_menu_edit"
         android:padding="4dp"
-        android:tint="@color/md_theme_onSurfaceVariant"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        app:tint="@color/md_theme_onSurfaceVariant" />
 
 </LinearLayout>

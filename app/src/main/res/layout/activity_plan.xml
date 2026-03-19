@@ -7,15 +7,74 @@
     android:background="@color/md_theme_surface"
     android:fitsSystemWindows="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📅 Plan screen coming next..."
-        android:textSize="18sp"
-        android:textColor="@color/md_theme_onSurface"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/planScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="88dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- HEADER -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YOUR PLAN"
+                android:textSize="11sp"
+                android:textColor="@color/md_theme_primary"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvPlanSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Week 1 · 4 workouts planned"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textColor="@color/md_theme_onSurface"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvPlanWeekDates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="19 Mar – 25 Mar"
+                android:textSize="13sp"
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- PLAN DAY LIST -->
+            <LinearLayout
+                android:id="@+id/planDayContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- BACK BUTTON pinned to bottom -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBackFromPlan"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="← Back to Home"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

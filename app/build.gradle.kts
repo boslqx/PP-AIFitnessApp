@@ -26,8 +26,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -52,4 +52,7 @@ dependencies {
 
     // Activity KTX — gives you easy ViewModel access in Activities
     implementation("androidx.activity:activity:1.11.0")
+
+    // Fragment — needed for AlertDialog used in LogActivity
+    implementation("androidx.fragment:fragment:1.8.5")
 }

@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions must be OUTSIDE <application> -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,9 +28,6 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
-        <uses-permission android:name="android.permission.CAMERA"/>
-
-        <!-- Router — decides where to send the user on launch -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -42,8 +45,13 @@
             android:name=".ui.home.HomeActivity"
             android:exported="false"/>
 
-        <activity android:name=".ui.plan.PlanActivity"   android:exported="false"/>
-        <activity android:name=".ui.log.LogActivity"     android:exported="false"/>
+        <activity
+            android:name=".ui.plan.PlanActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.log.LogActivity"
+            android:exported="false"/>
 
     </application>
 

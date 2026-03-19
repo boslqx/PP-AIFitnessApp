@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/md_theme_outlineVariant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- TODAY indicator bar (blue left bar) -->
+        <View
+            android:id="@+id/todayBar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/md_theme_primary"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Emoji icon -->
+            <TextView
+                android:id="@+id/tvPlanDayEmoji"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="🏋️"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:background="@color/md_theme_surfaceContainer"
+                android:layout_marginEnd="16dp"/>
+
+            <!-- Day info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Day name -->
+                <TextView
+                    android:id="@+id/tvPlanDayName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monday"
+                    android:textSize="12sp"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:layout_marginBottom="2dp"/>
+
+                <!-- Session title -->
+                <TextView
+                    android:id="@+id/tvPlanDayTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Moderate Gym — Strength"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_onSurface"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Intensity · Duration · Type -->
+                <TextView
+                    android:id="@+id/tvPlanDayMeta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Moderate  ·  60 min  ·  GYM"
+                    android:textSize="11sp"
+                    android:textColor="@color/md_theme_primary"/>
+
+            </LinearLayout>
+
+            <!-- Log status badge -->
+            <TextView
+                android:id="@+id/tvPlanDayLogStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✅ Completed"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- Session detail (exercises) -->
+        <TextView
+            android:id="@+id/tvPlanDayDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4×5 Squat · 4×5 Bench press · 3×8 Row"
+            android:textSize="13sp"
+            android:textColor="@color/md_theme_onSurfaceVariant"
+            android:lineSpacingMultiplier="1.4"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"/>
+
+        <!-- Coach note -->
+        <TextView
+            android:id="@+id/tvPlanDayCoachNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Week 1 — focus on form, not speed."
+            android:textSize="12sp"
+            android:textColor="@color/md_theme_primary"
+            android:fontFamily="sans-serif-medium"
+            android:background="@color/md_theme_surfaceContainer"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <!-- Log button (only for today + past days) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlanDayLog"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Log Now →"
+            android:textAllCaps="false"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
