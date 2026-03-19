@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AIFitnessApp">
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
+        <uses-permission android:name="android.permission.CAMERA"/>
+
         <!-- Router — decides where to send the user on launch -->
         <activity
             android:name=".MainActivity"

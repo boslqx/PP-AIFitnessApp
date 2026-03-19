@@ -10,14 +10,12 @@ public class WorkoutLog {
     public int id;
 
     public int userId;
-    public int plannedWorkoutId; // FK → PlannedWorkout.id
+    public int plannedWorkoutId;
 
-    public String date;          // ISO "YYYY-MM-DD"
-
-    // User's response
+    public String date;
     public String completionStatus; // COMPLETED, MODIFIED, SKIPPED
-    public int perceivedEffort;     // 1–5 (1=very easy, 5=very hard)
-    public String notes;
-
-    public String loggedAt;     // full timestamp
+    public int    perceivedEffort;  // 1–5
+    public String notes;            // serialized exercise list + user notes
+    public String photoPath;        // file path to saved photo (nullable)
+    public String loggedAt;
 }

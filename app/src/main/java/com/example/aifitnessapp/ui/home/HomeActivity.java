@@ -131,6 +131,7 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra("plannedWorkoutId", plan.id);
             intent.putExtra("activityType", plan.activityType);
             intent.putExtra("sessionTitle", plan.sessionTitle);
+            intent.putExtra("sessionDetail",   plan.sessionDetail);
             startActivity(intent);
         });
 
@@ -139,6 +140,7 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra("plannedWorkoutId", plan.id);
             intent.putExtra("activityType", "REST");
             intent.putExtra("sessionTitle", "Rest Day");
+            intent.putExtra("sessionDetail",   "");
             startActivity(intent);
         });
     }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="12dp"
+    android:layout_marginBottom="4dp">
+
+    <!-- Checkbox -->
+    <CheckBox
+        android:id="@+id/cbExerciseDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:buttonTint="@color/md_theme_primary"/>
+
+    <!-- Exercise name -->
+    <TextView
+        android:id="@+id/tvExerciseName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Squat"
+        android:textSize="14sp"
+        android:textColor="#212121"/>
+
+    <!-- Sets/reps — tappable to edit -->
+    <TextView
+        android:id="@+id/tvExerciseSets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4×5"
+        android:textSize="13sp"
+        android:textColor="@color/md_theme_primary"
+        android:textStyle="bold"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Edit button -->
+    <ImageView
+        android:id="@+id/btnEditExercise"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@android:drawable/ic_menu_edit"
+        android:padding="4dp"
+        android:tint="@color/md_theme_onSurfaceVariant"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>

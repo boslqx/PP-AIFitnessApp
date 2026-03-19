@@ -13,7 +13,7 @@ import com.example.aifitnessapp.data.model.*;
                 PlannedWorkout.class,
                 WorkoutLog.class
         },
-        version = 2,
+        version = 3,
         exportSchema = false
 )
 public abstract class FitAIDatabase extends RoomDatabase {
