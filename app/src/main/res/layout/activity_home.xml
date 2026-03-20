@@ -42,14 +42,37 @@
                 android:text="Week 1 · Day 1"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/md_theme_onSurfaceVariant"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="20dp"/>
 
-            <!-- TODAY'S FOCUS CARD -->
+            <!-- WEEK STRIP CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/md_theme_outlineVariant"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:id="@+id/weekStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- TODAY'S FOCUS CARD (full blue) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardToday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="24dp"
                 app:cardBackgroundColor="@color/md_theme_primary"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp">
@@ -70,7 +93,6 @@
                         android:letterSpacing="0.15"
                         android:layout_marginBottom="12dp"/>
 
-                    <!-- Emoji + Title row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -121,30 +143,26 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Session detail -->
                     <TextView
                         android:id="@+id/tvTodayDetail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="4×5 Squat · 4×5 Bench press · 3×8 Row"
+                        android:text="4×5 Squat · Bench press · Row"
                         android:textSize="13sp"
                         android:textColor="#E1E8FF"
                         android:lineSpacingMultiplier="1.4"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginBottom="12dp"/>
 
-                    <!-- Coach note -->
                     <TextView
                         android:id="@+id/tvTodayCoachNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Week 1 — focus on form, not speed."
+                        android:text="Week 1 — focus on form."
                         android:textSize="12sp"
                         android:textColor="#A8B4FF"
-                        android:fontFamily="sans-serif-medium"
                         android:layout_marginBottom="20dp"/>
 
-                    <!-- Already logged badge -->
                     <TextView
                         android:id="@+id/tvAlreadyLogged"
                         android:layout_width="wrap_content"
@@ -155,7 +173,6 @@
                         android:visibility="gone"
                         android:layout_marginBottom="8dp"/>
 
-                    <!-- Action buttons -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnStartWorkout"
                         style="@style/Widget.Material3.Button.TonalButton"
@@ -178,36 +195,25 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- WEEK OVERVIEW LABEL -->
+            <!-- FEED LABEL -->
             <TextView
+                android:id="@+id/tvFeedLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="THIS WEEK"
+                android:text="RECENT WORKOUTS"
                 android:textSize="11sp"
                 android:textColor="@color/md_theme_onSurfaceVariant"
                 android:textAllCaps="true"
                 android:letterSpacing="0.15"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"/>
 
-            <!-- WEEK STRIP -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- FEED CONTAINER -->
+            <LinearLayout
+                android:id="@+id/feedContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/md_theme_outlineVariant"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:id="@+id/weekStrip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"/>
-
-            </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

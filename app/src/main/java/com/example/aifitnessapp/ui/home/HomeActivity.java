@@ -1,24 +1,28 @@
+// ui/home/HomeActivity.java
 package com.example.aifitnessapp.ui.home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.data.model.PlannedWorkout;
+import com.example.aifitnessapp.data.model.WorkoutLog;
 import com.example.aifitnessapp.engine.PlanEngine;
+import com.example.aifitnessapp.ui.coach.CoachActivity;
 import com.example.aifitnessapp.ui.log.LogActivity;
 import com.example.aifitnessapp.ui.plan.PlanActivity;
+import com.example.aifitnessapp.ui.progress.ProgressActivity;
 import com.example.aifitnessapp.viewmodel.HomeViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.util.List;
-import com.example.aifitnessapp.ui.coach.CoachActivity;
-import com.example.aifitnessapp.ui.progress.ProgressActivity;
-import android.widget.LinearLayout;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -27,6 +31,9 @@ public class HomeActivity extends AppCompatActivity {
     // Header
     private TextView tvGreeting, tvWeekLabel;
 
+    // Week strip (inside card)
+    private LinearLayout weekStrip;
+
     // Today card
     private MaterialCardView cardToday;
     private TextView tvTodayEmoji, tvTodayTitle, tvTodayDetail;
@@ -34,8 +41,9 @@ public class HomeActivity extends AppCompatActivity {
     private MaterialButton btnStartWorkout, btnRestDay;
     private TextView tvAlreadyLogged;
 
-    // Week strip
-    private LinearLayout weekStrip;
+    // Feed
+    private LinearLayout feedContainer;
+    private TextView tvFeedLabel;
 
     // Bottom nav
     private MaterialButton btnNavLog, btnNavPlan, btnNavProgress, btnNavCoach;
@@ -55,38 +63,43 @@ public class HomeActivity extends AppCompatActivity {
         viewModel.currentUser.observe(this, user -> {
             if (user == null) return;
             currentUserId = user.id;
-
-            // 1. Greeting
             tvGreeting.setText(viewModel.getGreeting(user.name));
-
-            // 2. Init plan (generates if missing)
             viewModel.initPlan(user.id);
-
-            // 3. Week label
             viewModel.loadWeekLabel(user.id);
         });
 
-        // Week label / coach message
         viewModel.coachMessage.observe(this, msg ->
                 tvWeekLabel.setText(msg));
 
-        // Once plan is confirmed ready, load LiveData
         viewModel.planReady.observe(this, ready -> {
             if (!ready || currentUserId == -1) return;
             viewModel.loadPlan(currentUserId);
+            viewModel.loadFeed(currentUserId);
             observePlan();
+        });
+
+        // Feed observer
+        viewModel.feedItems.observe(this, items -> {
+            if (items == null) return;
+            buildFeed(items);
         });
     }
 
-    private void observePlan() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh feed when returning from LogActivity
+        if (currentUserId != -1) {
+            viewModel.loadFeed(currentUserId);
+        }
+    }
 
-        // TODAY card
+    private void observePlan() {
         viewModel.todayPlan.observe(this, plan -> {
             if (plan == null) return;
             renderTodayCard(plan);
         });
 
-        // WEEK strip
         viewModel.weekPlan.observe(this, plans -> {
             if (plans == null || plans.isEmpty()) return;
             renderWeekStrip(plans);
@@ -103,7 +116,7 @@ public class HomeActivity extends AppCompatActivity {
 
         if (plan.isRestDay) {
             tvTodayIntensity.setText("Rest");
-            tvTodayDuration.setText("—");
+            tvTodayDuration.setVisibility(View.GONE);
             btnStartWorkout.setVisibility(View.GONE);
             btnRestDay.setVisibility(View.VISIBLE);
         } else {
@@ -114,7 +127,6 @@ public class HomeActivity extends AppCompatActivity {
             btnRestDay.setVisibility(View.GONE);
         }
 
-        // Check if already logged today
         if (currentUserId != -1) {
             viewModel.getTodayLog(currentUserId).observe(this, log -> {
                 if (log != null) {
@@ -127,22 +139,21 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // Start workout → go to log screen with plan context
         btnStartWorkout.setOnClickListener(v -> {
             Intent intent = new Intent(this, LogActivity.class);
             intent.putExtra("plannedWorkoutId", plan.id);
-            intent.putExtra("activityType", plan.activityType);
-            intent.putExtra("sessionTitle", plan.sessionTitle);
-            intent.putExtra("sessionDetail",   plan.sessionDetail);
+            intent.putExtra("activityType",     plan.activityType);
+            intent.putExtra("sessionTitle",     plan.sessionTitle);
+            intent.putExtra("sessionDetail",    plan.sessionDetail);
             startActivity(intent);
         });
 
         btnRestDay.setOnClickListener(v -> {
             Intent intent = new Intent(this, LogActivity.class);
             intent.putExtra("plannedWorkoutId", plan.id);
-            intent.putExtra("activityType", "REST");
-            intent.putExtra("sessionTitle", "Rest Day");
-            intent.putExtra("sessionDetail",   "");
+            intent.putExtra("activityType",     "REST");
+            intent.putExtra("sessionTitle",     "Rest Day");
+            intent.putExtra("sessionDetail",    "");
             startActivity(intent);
         });
     }
@@ -154,11 +165,9 @@ public class HomeActivity extends AppCompatActivity {
         String today = PlanEngine.getTodayDayOfWeek();
 
         for (PlannedWorkout plan : plans) {
-            // Inflate without attaching — we set params manually
-            View dayView = getLayoutInflater()
+            View dayView = LayoutInflater.from(this)
                     .inflate(R.layout.item_week_day, weekStrip, false);
 
-            // Set weight programmatically so each day takes equal space
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
             dayView.setLayoutParams(params);
@@ -167,25 +176,138 @@ public class HomeActivity extends AppCompatActivity {
             TextView tvDayIcon  = dayView.findViewById(R.id.tvDayIcon);
             View     indicator  = dayView.findViewById(R.id.todayIndicator);
 
-            // Safety check — skip if layout IDs not found
             if (tvDayLabel == null || tvDayIcon == null || indicator == null) continue;
 
             tvDayLabel.setText(plan.dayOfWeek.substring(0, 1)
                     + plan.dayOfWeek.substring(1, 2).toLowerCase());
             tvDayIcon.setText(plan.isRestDay ? "😴" : activityEmoji(plan.activityType));
 
-            boolean isToday = plan.dayOfWeek.equals(today);
+            boolean isToday  = plan.dayOfWeek.equals(today);
+            boolean isPast   = isDayPast(plan.dayOfWeek, today);
+            boolean isFuture = !isToday && !isPast;
+
             indicator.setVisibility(isToday ? View.VISIBLE : View.INVISIBLE);
 
             if (isToday) {
                 tvDayLabel.setTextColor(getColor(R.color.md_theme_primary));
                 tvDayIcon.setAlpha(1f);
-            } else {
+            } else if (isPast) {
                 tvDayLabel.setTextColor(0xFF9E9E9E);
-                tvDayIcon.setAlpha(isDayPast(plan.dayOfWeek, today) ? 0.4f : 1f);
+                tvDayIcon.setAlpha(0.9f);
+            } else {
+                // Future days — faded
+                tvDayLabel.setTextColor(0xFFCCCCCC);
+                tvDayIcon.setAlpha(0.35f);
             }
 
             weekStrip.addView(dayView);
+        }
+    }
+
+    // ── Feed ──────────────────────────────────────────────────
+
+    private void buildFeed(List<HomeViewModel.FeedItem> items) {
+        feedContainer.removeAllViews();
+
+        if (items.isEmpty()) {
+            tvFeedLabel.setVisibility(View.GONE);
+            return;
+        }
+
+        tvFeedLabel.setVisibility(View.VISIBLE);
+
+        for (HomeViewModel.FeedItem item : items) {
+            View card = LayoutInflater.from(this)
+                    .inflate(R.layout.item_feed_card, feedContainer, false);
+
+            ImageView ivPhoto  = card.findViewById(R.id.ivFeedPhoto);
+            TextView  tvEmoji  = card.findViewById(R.id.tvFeedEmoji);
+            TextView  tvTitle  = card.findViewById(R.id.tvFeedTitle);
+            TextView  tvDate   = card.findViewById(R.id.tvFeedDate);
+            TextView  tvStatus = card.findViewById(R.id.tvFeedStatus);
+            TextView  tvEffort = card.findViewById(R.id.tvFeedEffort);
+            LinearLayout exContainer = card.findViewById(R.id.feedExerciseContainer);
+            TextView  tvMore   = card.findViewById(R.id.tvFeedMoreExercises);
+
+            // Photo
+            if (item.log.photoPath != null && !item.log.photoPath.isEmpty()) {
+                ivPhoto.setVisibility(View.VISIBLE);
+                ivPhoto.setImageURI(Uri.parse(item.log.photoPath));
+            } else {
+                ivPhoto.setVisibility(View.GONE);
+            }
+
+            // Header
+            tvEmoji.setText(activityEmoji(item.activityType));
+            tvTitle.setText(item.sessionTitle);
+            tvDate.setText(item.displayDate);
+            tvStatus.setText(statusEmoji(item.log.completionStatus));
+
+            // Effort
+            if (item.log.perceivedEffort > 0) {
+                tvEffort.setText(effortDots(item.log.perceivedEffort)
+                        + "  " + effortLabel(item.log.perceivedEffort));
+                tvEffort.setVisibility(View.VISIBLE);
+            } else {
+                tvEffort.setVisibility(View.GONE);
+            }
+
+            // Exercises — parse from notes, show max 3
+            if (item.log.notes != null && !item.log.notes.isEmpty()) {
+                String[] lines = item.log.notes.split("\n");
+                int shown = 0;
+                int total = 0;
+
+                for (String line : lines) {
+                    line = line.trim();
+                    if (line.startsWith("✅") || line.startsWith("⏭️")) total++;
+                }
+
+                for (String line : lines) {
+                    line = line.trim();
+                    if (!line.startsWith("✅") && !line.startsWith("⏭️")) continue;
+                    if (shown >= 3) break;
+
+                    TextView tv = new TextView(this);
+                    tv.setText(line);
+                    tv.setTextSize(12f);
+                    tv.setTextColor(line.startsWith("✅") ? 0xFF2E7D32 : 0xFF9E9E9E);
+                    tv.setPadding(0, 2, 0, 2);
+                    exContainer.addView(tv);
+                    shown++;
+                }
+
+                int overflow = total - shown;
+                if (overflow > 0) {
+                    tvMore.setText("+ " + overflow + " more");
+                    tvMore.setVisibility(View.VISIBLE);
+                }
+            }
+
+            // Tap → detail screen
+            WorkoutLog log  = item.log;
+            PlannedWorkout plan = item.plan;
+            card.setOnClickListener(v -> {
+                Intent intent = new Intent(this, WorkoutDetailActivity.class);
+                intent.putExtra("date",             item.displayDate);
+                intent.putExtra("sessionTitle",     item.sessionTitle);
+                intent.putExtra("activityType",     item.activityType);
+                intent.putExtra("completionStatus", log.completionStatus);
+                intent.putExtra("perceivedEffort",  log.perceivedEffort);
+                intent.putExtra("notes",            log.notes);
+                intent.putExtra("photoPath",        log.photoPath);
+                intent.putExtra("durationSeconds",  log.durationSeconds);
+                intent.putExtra("coachNote",
+                        plan != null ? plan.coachNote : "");
+                startActivity(intent);
+            });
+
+            // Skipped posts — slightly faded
+            if ("SKIPPED".equals(item.log.completionStatus)) {
+                card.setAlpha(0.6f);
+            }
+
+            feedContainer.addView(card);
         }
     }
 
@@ -194,13 +316,10 @@ public class HomeActivity extends AppCompatActivity {
     private void setupBottomNav() {
         btnNavLog.setOnClickListener(v ->
                 startActivity(new Intent(this, LogActivity.class)));
-
         btnNavPlan.setOnClickListener(v ->
                 startActivity(new Intent(this, PlanActivity.class)));
-
         btnNavProgress.setOnClickListener(v ->
                 startActivity(new Intent(this, ProgressActivity.class)));
-
         btnNavCoach.setOnClickListener(v ->
                 startActivity(new Intent(this, CoachActivity.class)));
     }
@@ -208,29 +327,31 @@ public class HomeActivity extends AppCompatActivity {
     // ── View binding ──────────────────────────────────────────
 
     private void bindViews() {
-        tvGreeting        = findViewById(R.id.tvGreeting);
-        tvWeekLabel       = findViewById(R.id.tvWeekLabel);
-        cardToday         = findViewById(R.id.cardToday);
-        tvTodayEmoji      = findViewById(R.id.tvTodayEmoji);
-        tvTodayTitle      = findViewById(R.id.tvTodayTitle);
-        tvTodayDetail     = findViewById(R.id.tvTodayDetail);
-        tvTodayIntensity  = findViewById(R.id.tvTodayIntensity);
-        tvTodayDuration   = findViewById(R.id.tvTodayDuration);
-        tvTodayCoachNote  = findViewById(R.id.tvTodayCoachNote);
-        btnStartWorkout   = findViewById(R.id.btnStartWorkout);
-        btnRestDay        = findViewById(R.id.btnRestDay);
-        tvAlreadyLogged   = findViewById(R.id.tvAlreadyLogged);
-        weekStrip         = findViewById(R.id.weekStrip);
-        btnNavLog         = findViewById(R.id.btnNavLog);
-        btnNavPlan        = findViewById(R.id.btnNavPlan);
-        btnNavProgress    = findViewById(R.id.btnNavProgress);
-        btnNavCoach       = findViewById(R.id.btnNavCoach);
+        tvGreeting       = findViewById(R.id.tvGreeting);
+        tvWeekLabel      = findViewById(R.id.tvWeekLabel);
+        weekStrip        = findViewById(R.id.weekStrip);
+        cardToday        = findViewById(R.id.cardToday);
+        tvTodayEmoji     = findViewById(R.id.tvTodayEmoji);
+        tvTodayTitle     = findViewById(R.id.tvTodayTitle);
+        tvTodayDetail    = findViewById(R.id.tvTodayDetail);
+        tvTodayIntensity = findViewById(R.id.tvTodayIntensity);
+        tvTodayDuration  = findViewById(R.id.tvTodayDuration);
+        tvTodayCoachNote = findViewById(R.id.tvTodayCoachNote);
+        btnStartWorkout  = findViewById(R.id.btnStartWorkout);
+        btnRestDay       = findViewById(R.id.btnRestDay);
+        tvAlreadyLogged  = findViewById(R.id.tvAlreadyLogged);
+        feedContainer    = findViewById(R.id.feedContainer);
+        tvFeedLabel      = findViewById(R.id.tvFeedLabel);
+        btnNavLog        = findViewById(R.id.btnNavLog);
+        btnNavPlan       = findViewById(R.id.btnNavPlan);
+        btnNavProgress   = findViewById(R.id.btnNavProgress);
+        btnNavCoach      = findViewById(R.id.btnNavCoach);
     }
 
     // ── Helpers ───────────────────────────────────────────────
 
     private String activityEmoji(String type) {
-        if (type == null) return "🏋️";
+        if (type == null) return "💪";
         switch (type) {
             case "GYM":        return "🏋️";
             case "RUNNING":    return "🏃";
@@ -256,13 +377,40 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private String statusEmoji(String s) {
+        if (s == null) return "—";
+        switch (s) {
+            case "COMPLETED": return "✅";
+            case "MODIFIED":  return "✏️";
+            case "SKIPPED":   return "⏭️";
+            default:          return "—";
+        }
+    }
+
+    private String effortDots(int e) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= 5; i++) sb.append(i <= e ? "●" : "○");
+        return sb.toString();
+    }
+
+    private String effortLabel(int e) {
+        switch (e) {
+            case 1: return "Very Easy";
+            case 2: return "Light";
+            case 3: return "Moderate";
+            case 4: return "Hard";
+            case 5: return "Very Hard";
+            default: return "";
+        }
+    }
+
     private boolean isDayPast(String day, String today) {
         String[] order = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
-        int dayIdx = 0, todayIdx = 0;
+        int d = 0, t = 0;
         for (int i = 0; i < order.length; i++) {
-            if (order[i].equals(day))   dayIdx   = i;
-            if (order[i].equals(today)) todayIdx = i;
+            if (order[i].equals(day))   d = i;
+            if (order[i].equals(today)) t = i;
         }
-        return dayIdx < todayIdx;
+        return d < t;
     }
 }

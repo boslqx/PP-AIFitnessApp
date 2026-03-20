@@ -18,4 +18,5 @@ public class WorkoutLog {
     public String notes;            // serialized exercise list + user notes
     public String photoPath;        // file path to saved photo (nullable)
     public String loggedAt;
+    public boolean durationSeconds;
 }

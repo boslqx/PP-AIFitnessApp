@@ -61,6 +61,10 @@
             android:name=".ui.progress.ProgressActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.home.WorkoutDetailActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
