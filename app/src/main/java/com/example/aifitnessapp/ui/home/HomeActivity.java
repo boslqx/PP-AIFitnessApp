@@ -16,6 +16,8 @@ import com.example.aifitnessapp.viewmodel.HomeViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.util.List;
+import com.example.aifitnessapp.ui.coach.CoachActivity;
+import com.example.aifitnessapp.ui.progress.ProgressActivity;
 import android.widget.LinearLayout;
 
 public class HomeActivity extends AppCompatActivity {
@@ -196,14 +198,11 @@ public class HomeActivity extends AppCompatActivity {
         btnNavPlan.setOnClickListener(v ->
                 startActivity(new Intent(this, PlanActivity.class)));
 
-        // Progress and Coach — stubs for now
-        btnNavProgress.setOnClickListener(v -> {
-            // TODO: Phase B — ProgressActivity
-        });
+        btnNavProgress.setOnClickListener(v ->
+                startActivity(new Intent(this, ProgressActivity.class)));
 
-        btnNavCoach.setOnClickListener(v -> {
-            // TODO: Phase B — CoachActivity
-        });
+        btnNavCoach.setOnClickListener(v ->
+                startActivity(new Intent(this, CoachActivity.class)));
     }
 
     // ── View binding ──────────────────────────────────────────

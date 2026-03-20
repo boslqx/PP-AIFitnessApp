@@ -53,6 +53,14 @@
             android:name=".ui.log.LogActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.coach.CoachActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.progress.ProgressActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
