@@ -64,13 +64,21 @@ public class HomeActivity extends AppCompatActivity {
             if (user == null) return;
             currentUserId = user.id;
             tvGreeting.setText(viewModel.getGreeting(user.name));
-            viewModel.initPlan(user.id);
             viewModel.loadWeekLabel(user.id);
+
+            // Only trigger initPlan once — guard with a flag
+            if (!viewModel.planReady.getValue()) {
+                viewModel.initPlan(user.id);
+            } else {
+                // Already ready (e.g. rotation) — just load feed
+                viewModel.loadFeed(user.id);
+            }
         });
 
         viewModel.coachMessage.observe(this, msg ->
                 tvWeekLabel.setText(msg));
 
+        // planReady: only act when it actually flips to true
         viewModel.planReady.observe(this, ready -> {
             if (!ready || currentUserId == -1) return;
             viewModel.loadPlan(currentUserId);
@@ -78,7 +86,6 @@ public class HomeActivity extends AppCompatActivity {
             observePlan();
         });
 
-        // Feed observer
         viewModel.feedItems.observe(this, items -> {
             if (items == null) return;
             buildFeed(items);
@@ -88,8 +95,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh feed when returning from LogActivity
-        if (currentUserId != -1) {
+        // Only refresh feed if plan is already loaded (guards against first launch)
+        if (currentUserId != -1
+                && viewModel.planReady.getValue() != null
+                && viewModel.planReady.getValue()
+                && viewModel.todayPlan != null) {
             viewModel.loadFeed(currentUserId);
         }
     }

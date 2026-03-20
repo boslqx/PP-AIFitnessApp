@@ -40,6 +40,7 @@ public class LogViewModel extends AndroidViewModel {
             log.perceivedEffort  = perceivedEffort;
             log.notes         = notes;
             log.photoPath     = photoPath;
+            log.durationSeconds = 0;   // ← ADD THIS LINE
             log.date          = new SimpleDateFormat(
                     "yyyy-MM-dd", Locale.getDefault()).format(new Date());
             log.loggedAt      = new SimpleDateFormat(
