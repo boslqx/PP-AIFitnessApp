@@ -91,9 +91,10 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     /*
-     * Loads past workout logs from the last 7 days (excluding today)
+     * Loads recent workout logs from the last 7 days (including today)
      * and pairs each with its PlannedWorkout for context.
-     * Builds FeedItem list sorted newest first.
+     * Builds FeedItem list sorted newest first so a newly logged workout
+     * appears immediately in the home feed when returning from LogActivity.
      */
     public void loadFeed(int userId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -110,9 +111,6 @@ public class HomeViewModel extends AndroidViewModel {
             List<FeedItem> items = new ArrayList<>();
 
             for (WorkoutLog log : logs) {
-                // Skip today — it's shown in the today card
-                if (log.date.equals(today)) continue;
-
                 // Find matching planned workout
                 String weekStart = getWeekStart(log.date);
                 String dayOfWeek = getDayOfWeek(log.date);
@@ -122,7 +120,7 @@ public class HomeViewModel extends AndroidViewModel {
                 FeedItem item = new FeedItem();
                 item.log          = log;
                 item.plan         = plan;
-                item.displayDate  = formatDisplayDate(log.date);
+                item.displayDate  = formatDisplayDate(log.date, today);
                 item.activityType = plan != null ? plan.activityType : "GYM";
                 item.sessionTitle = plan != null ? plan.sessionTitle : "Workout";
                 item.isRestDay    = plan != null && plan.isRestDay;
@@ -165,7 +163,8 @@ public class HomeViewModel extends AndroidViewModel {
         } catch (Exception e) { return "MON"; }
     }
 
-    private String formatDisplayDate(String dateStr) {
+    private String formatDisplayDate(String dateStr, String today) {
+        if (dateStr != null && dateStr.equals(today)) return "Today";
         try {
             SimpleDateFormat in  = new SimpleDateFormat(
                     "yyyy-MM-dd", Locale.getDefault());
