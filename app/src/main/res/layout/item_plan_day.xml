@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- TODAY indicator bar (blue left bar) -->
+        <!-- TODAY indicator bar (blue top bar) -->
         <View
             android:id="@+id/todayBar"
             android:layout_width="match_parent"
@@ -24,6 +24,7 @@
             android:background="@color/md_theme_primary"
             android:visibility="gone"/>
 
+        <!-- HEADER ROW: emoji + title + edit button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,7 +82,7 @@
 
             </LinearLayout>
 
-            <!-- Log status badge -->
+            <!-- Log status badge (✅ Completed etc) -->
             <TextView
                 android:id="@+id/tvPlanDayLogStatus"
                 android:layout_width="wrap_content"
@@ -89,11 +90,30 @@
                 android:text="✅ Completed"
                 android:textSize="12sp"
                 android:textStyle="bold"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"/>
+
+            <!--
+                EDIT BUTTON
+                Shown for today and future days only.
+                Past days cannot be edited because they may already be logged.
+                We use a small icon-style button to keep the header row compact.
+            -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditDay"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="✏️"
+                android:textSize="14sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:minWidth="0dp"
                 android:visibility="gone"/>
 
         </LinearLayout>
 
-        <!-- Session detail (exercises) -->
+        <!-- Session detail (exercises / instructions) -->
         <TextView
             android:id="@+id/tvPlanDayDetail"
             android:layout_width="match_parent"
@@ -121,18 +141,26 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"/>
 
-        <!-- Log button (only for today + past days) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPlanDayLog"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Log Now →"
-            android:textAllCaps="false"
-            android:visibility="gone"/>
+        <!-- BOTTOM ACTION ROW: Log button + spacing -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp">
+
+            <!-- Log button (only for today + past days) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlanDayLog"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Log Now →"
+                android:textAllCaps="false"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
