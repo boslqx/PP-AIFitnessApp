@@ -9,8 +9,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
-import com.example.aifitnessapp.ui.onboarding.OnboardingActivity;
+import com.example.aifitnessapp.databinding.ActivityAuthBinding;
 import com.example.aifitnessapp.ui.home.HomeActivity;
+import com.example.aifitnessapp.ui.onboarding.OnboardingActivity;
 import com.example.aifitnessapp.viewmodel.AuthViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -18,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 public class AuthActivity extends AppCompatActivity {
 
     private AuthViewModel viewModel;
+    private ActivityAuthBinding binding;
 
     // ── Tab buttons ───────────────────────────────────────────
     private MaterialButton btnTabLogin, btnTabRegister;
@@ -27,14 +29,14 @@ public class AuthActivity extends AppCompatActivity {
 
     // ── Login fields ──────────────────────────────────────────
     private TextInputEditText etLoginEmail, etLoginPassword;
-    private MaterialButton    btnLogin;
+    private MaterialButton btnLogin;
 
     // ── Register fields ───────────────────────────────────────
     private TextInputEditText etRegisterEmail, etRegisterPassword, etRegisterConfirm;
-    private MaterialButton    btnRegister;
+    private MaterialButton btnRegister;
 
     // ── Shared ────────────────────────────────────────────────
-    private TextView    tvAuthError;
+    private TextView tvAuthError;
     private ProgressBar pbAuth;
 
     // Track which tab is active — login by default
@@ -43,7 +45,9 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
+
+        binding = ActivityAuthBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
@@ -120,15 +124,15 @@ public class AuthActivity extends AppCompatActivity {
     // ─────────────────────────────────────────────────────────
     private void setupButtons() {
         btnLogin.setOnClickListener(v -> {
-            String email    = getText(etLoginEmail);
+            String email = getText(etLoginEmail);
             String password = getText(etLoginPassword);
             viewModel.login(email, password);
         });
 
         btnRegister.setOnClickListener(v -> {
-            String email    = getText(etRegisterEmail);
+            String email = getText(etRegisterEmail);
             String password = getText(etRegisterPassword);
-            String confirm  = getText(etRegisterConfirm);
+            String confirm = getText(etRegisterConfirm);
             viewModel.register(email, password, confirm);
         });
     }
@@ -198,19 +202,19 @@ public class AuthActivity extends AppCompatActivity {
     // ── View binding ──────────────────────────────────────────
 
     private void bindViews() {
-        btnTabLogin      = findViewById(R.id.btnTabLogin);
-        btnTabRegister   = findViewById(R.id.btnTabRegister);
-        loginPanel       = findViewById(R.id.loginPanel);
-        registerPanel    = findViewById(R.id.registerPanel);
-        etLoginEmail     = findViewById(R.id.etLoginEmail);
-        etLoginPassword  = findViewById(R.id.etLoginPassword);
-        btnLogin         = findViewById(R.id.btnLogin);
-        etRegisterEmail  = findViewById(R.id.etRegisterEmail);
-        etRegisterPassword = findViewById(R.id.etRegisterPassword);
-        etRegisterConfirm  = findViewById(R.id.etRegisterConfirm);
-        btnRegister      = findViewById(R.id.btnRegister);
-        tvAuthError      = findViewById(R.id.tvAuthError);
-        pbAuth           = findViewById(R.id.pbAuth);
+        btnTabLogin = binding.btnTabLogin;
+        btnTabRegister = binding.btnTabRegister;
+        loginPanel = binding.loginPanel;
+        registerPanel = binding.registerPanel;
+        etLoginEmail = binding.etLoginEmail;
+        etLoginPassword = binding.etLoginPassword;
+        btnLogin = binding.btnLogin;
+        etRegisterEmail = binding.etRegisterEmail;
+        etRegisterPassword = binding.etRegisterPassword;
+        etRegisterConfirm = binding.etRegisterConfirm;
+        btnRegister = binding.btnRegister;
+        tvAuthError = binding.tvAuthError;
+        pbAuth = binding.pbAuth;
     }
 
     // ── Helper ────────────────────────────────────────────────
@@ -218,5 +222,11 @@ public class AuthActivity extends AppCompatActivity {
     private String getText(TextInputEditText field) {
         return field.getText() != null
                 ? field.getText().toString().trim() : "";
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }
