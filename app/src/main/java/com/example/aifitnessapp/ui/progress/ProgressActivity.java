@@ -1,9 +1,11 @@
 package com.example.aifitnessapp.ui.progress;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +14,6 @@ import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.ui.home.HomeActivity;
 import com.example.aifitnessapp.viewmodel.ProgressViewModel;
 import com.google.android.material.button.MaterialButton;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +22,10 @@ public class ProgressActivity extends AppCompatActivity {
 
     private ProgressViewModel viewModel;
 
-    private View loadingState, contentState;
-    private TextView tvTotalWorkouts, tvCompletionPct, tvStreak;
-    private TextView tvTotalSkipped, tvMemberSince;
-    private LinearLayout historyContainer, breakdownContainer;
+    private View           loadingState, contentState;
+    private TextView       tvTotalWorkouts, tvCompletionPct, tvStreak;
+    private TextView       tvTotalSkipped, tvMemberSince;
+    private LinearLayout   historyContainer, breakdownContainer;
     private MaterialButton btnBackFromProgress;
 
     @Override
@@ -41,13 +42,11 @@ public class ProgressActivity extends AppCompatActivity {
             viewModel.loadProgress(user.id);
         });
 
-        // Loading state
         viewModel.isLoading.observe(this, loading -> {
             loadingState.setVisibility(loading ? View.VISIBLE : View.GONE);
-            contentState.setVisibility(loading ? View.GONE : View.VISIBLE);
+            contentState.setVisibility(loading ? View.GONE  : View.VISIBLE);
         });
 
-        // Stats
         viewModel.totalWorkouts.observe(this, v ->
                 tvTotalWorkouts.setText(String.valueOf(v)));
 
@@ -63,13 +62,11 @@ public class ProgressActivity extends AppCompatActivity {
         viewModel.memberSince.observe(this, v ->
                 tvMemberSince.setText("Member since " + v));
 
-        // History
         viewModel.historyRows.observe(this, rows -> {
             if (rows == null) return;
             buildHistoryList(rows);
         });
 
-        // Activity breakdown
         viewModel.activityBreakdown.observe(this, map -> {
             if (map == null) return;
             buildBreakdown(map);
@@ -81,8 +78,21 @@ public class ProgressActivity extends AppCompatActivity {
         });
     }
 
-    // ── History list ──────────────────────────────────────────
-
+    // ─────────────────────────────────────────────────────────
+    //  HISTORY LIST
+    //
+    //  Each row shows: [photo thumbnail OR emoji icon] | date + title | effort
+    //
+    //  PHOTO LOADING LOGIC:
+    //  1. Check if row.photoPath is non-null and non-empty
+    //  2. If yes: hide the emoji TextView, show the ImageView, load the URI
+    //  3. If no:  show the emoji TextView, keep ImageView gone
+    //
+    //  WHY check both null AND empty?
+    //  The database stores an empty string "" if the user didn't add a photo
+    //  (some code paths call saveLog with photoPath = null, others with "").
+    //  Checking both makes the code robust against either case.
+    // ─────────────────────────────────────────────────────────
     private void buildHistoryList(List<ProgressViewModel.HistoryRow> rows) {
         historyContainer.removeAllViews();
 
@@ -99,18 +109,51 @@ public class ProgressActivity extends AppCompatActivity {
         // Show most recent first — rows are ASC from DB so reverse
         for (int i = rows.size() - 1; i >= 0; i--) {
             ProgressViewModel.HistoryRow row = rows.get(i);
+
             View item = LayoutInflater.from(this)
                     .inflate(R.layout.item_history_row, historyContainer, false);
 
-            TextView tvIcon     = item.findViewById(R.id.tvHistoryIcon);
-            TextView tvDate     = item.findViewById(R.id.tvHistoryDate);
-            TextView tvTitle    = item.findViewById(R.id.tvHistoryTitle);
-            TextView tvEffort   = item.findViewById(R.id.tvHistoryEffort);
+            // ── Bind views ────────────────────────────────────
+            TextView  tvIcon    = item.findViewById(R.id.tvHistoryIcon);
+            ImageView ivPhoto   = item.findViewById(R.id.ivHistoryPhoto); // ← NEW
+            TextView  tvDate    = item.findViewById(R.id.tvHistoryDate);
+            TextView  tvTitle   = item.findViewById(R.id.tvHistoryTitle);
+            TextView  tvEffort  = item.findViewById(R.id.tvHistoryEffort);
 
-            tvIcon.setText(row.isRestDay ? "😴" : activityEmoji(row.activityType));
+            // ── Photo vs icon logic ───────────────────────────
+            boolean hasPhoto = row.photoPath != null && !row.photoPath.isEmpty();
+
+            if (hasPhoto) {
+                // Hide the emoji text icon — the photo replaces it
+                tvIcon.setVisibility(View.GONE);
+
+                // Show the ImageView and load the photo
+                ivPhoto.setVisibility(View.VISIBLE);
+                try {
+                    // Uri.parse() converts our stored path string into a Uri.
+                    // The path was saved as "file:///..." by LogActivity,
+                    // or as a content:// URI from the gallery picker.
+                    // Uri.parse() handles both formats correctly.
+                    ivPhoto.setImageURI(Uri.parse(row.photoPath));
+                } catch (Exception e) {
+                    // If the file was deleted or the path is corrupt,
+                    // fall back gracefully to the emoji icon.
+                    ivPhoto.setVisibility(View.GONE);
+                    tvIcon.setVisibility(View.VISIBLE);
+                    tvIcon.setText(row.isRestDay ? "😴" : activityEmoji(row.activityType));
+                }
+            } else {
+                // No photo — show emoji icon as before
+                ivPhoto.setVisibility(View.GONE);
+                tvIcon.setVisibility(View.VISIBLE);
+                tvIcon.setText(row.isRestDay ? "😴" : activityEmoji(row.activityType));
+            }
+
+            // ── Date and title ────────────────────────────────
             tvDate.setText(row.date);
             tvTitle.setText(row.statusIcon + "  " + row.sessionTitle);
 
+            // ── Effort dots ───────────────────────────────────
             if (!row.isRestDay && row.perceivedEffort > 0) {
                 tvEffort.setText(effortDots(row.perceivedEffort));
                 tvEffort.setVisibility(View.VISIBLE);
@@ -118,7 +161,7 @@ public class ProgressActivity extends AppCompatActivity {
                 tvEffort.setVisibility(View.GONE);
             }
 
-            // Dim skipped rows
+            // Dim skipped rows so they read as less significant
             if ("SKIPPED".equals(row.completionStatus)) {
                 item.setAlpha(0.5f);
             }
@@ -127,8 +170,9 @@ public class ProgressActivity extends AppCompatActivity {
         }
     }
 
-    // ── Activity breakdown ────────────────────────────────────
-
+    // ─────────────────────────────────────────────────────────
+    //  ACTIVITY BREAKDOWN — unchanged from original
+    // ─────────────────────────────────────────────────────────
     private void buildBreakdown(Map<String, Integer> map) {
         breakdownContainer.removeAllViews();
 
@@ -140,15 +184,12 @@ public class ProgressActivity extends AppCompatActivity {
             return;
         }
 
-        // Find max count for bar scaling
         int maxCount = 1;
         for (int count : map.values()) {
             if (count > maxCount) maxCount = count;
         }
 
-        // Sort by count descending
-        List<Map.Entry<String, Integer>> entries =
-                new ArrayList<>(map.entrySet());
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
         entries.sort((a, b) -> b.getValue() - a.getValue());
 
         for (Map.Entry<String, Integer> entry : entries) {
@@ -164,13 +205,10 @@ public class ProgressActivity extends AppCompatActivity {
             tvName.setText(formatActivity(entry.getKey()));
             tvCount.setText(String.valueOf(entry.getValue()));
 
-            // Scale bar to max — 12 chars wide
             float ratio = (float) entry.getValue() / maxCount;
-            int filled = Math.max(1, Math.round(ratio * 12));
+            int filled  = Math.max(1, Math.round(ratio * 12));
             StringBuilder bar = new StringBuilder();
-            for (int i = 0; i < 12; i++) {
-                bar.append(i < filled ? "█" : "░");
-            }
+            for (int i = 0; i < 12; i++) bar.append(i < filled ? "█" : "░");
             tvBar.setText(bar.toString());
 
             breakdownContainer.addView(item);
@@ -228,9 +266,7 @@ public class ProgressActivity extends AppCompatActivity {
 
     private String effortDots(int effort) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= 5; i++) {
-            sb.append(i <= effort ? "●" : "○");
-        }
+        for (int i = 1; i <= 5; i++) sb.append(i <= effort ? "●" : "○");
         return sb.toString();
     }
 }

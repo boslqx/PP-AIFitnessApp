@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_history_row.xml
+    One row in the Progress screen's workout history list.
+
+    LAYOUT STRUCTURE:
+    [Thumbnail/Icon] | [Date + Title] | [Effort dots]
+
+    The thumbnail (ivHistoryPhoto) and the emoji icon (tvHistoryIcon)
+    occupy the same 40×40dp slot on the left.
+    - If a photo exists: show thumbnail, hide emoji icon
+    - If no photo:       show emoji icon, hide thumbnail
+
+    WHY this approach instead of overlapping views?
+    Using GONE/VISIBLE is simpler and more performant than
+    FrameLayout overlapping. Only one view takes up space at a time.
+    The row height stays consistent either way.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -8,6 +25,12 @@
     android:padding="12dp"
     android:layout_marginBottom="2dp">
 
+    <!--
+        ICON SLOT — either emoji or photo thumbnail.
+        Both are 40×40dp so the row width never changes.
+    -->
+
+    <!-- Emoji icon — shown when no photo exists -->
     <TextView
         android:id="@+id/tvHistoryIcon"
         android:layout_width="40dp"
@@ -18,6 +41,24 @@
         android:background="@color/md_theme_surfaceContainer"
         android:layout_marginEnd="12dp"/>
 
+    <!--
+        Photo thumbnail — shown when a photo exists.
+        Starts GONE. Java code sets it VISIBLE and loads the image.
+
+        scaleType="centerCrop":
+        Crops the image to fill the square without distortion.
+        This is the correct scale type for thumbnails — it always
+        fills the space cleanly regardless of photo orientation.
+    -->
+    <ImageView
+        android:id="@+id/ivHistoryPhoto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="12dp"
+        android:visibility="gone"/>
+
+    <!-- DATE + SESSION TITLE -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -43,6 +84,7 @@
 
     </LinearLayout>
 
+    <!-- EFFORT DOTS e.g. ●●●○○ -->
     <TextView
         android:id="@+id/tvHistoryEffort"
         android:layout_width="wrap_content"

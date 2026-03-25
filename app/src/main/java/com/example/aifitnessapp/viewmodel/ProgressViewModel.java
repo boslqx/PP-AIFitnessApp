@@ -24,14 +24,14 @@ public class ProgressViewModel extends AndroidViewModel {
     private FitAIDatabase db;
     public LiveData<UserPreferences> currentUser;
 
-    // Stats
-    public MutableLiveData<Integer> totalWorkouts    = new MutableLiveData<>(0);
-    public MutableLiveData<Integer> completionPct    = new MutableLiveData<>(0);
-    public MutableLiveData<Integer> currentStreak    = new MutableLiveData<>(0);
-    public MutableLiveData<Integer> totalSkipped     = new MutableLiveData<>(0);
-    public MutableLiveData<String>  memberSince      = new MutableLiveData<>("");
+    // ── Stats LiveData ─────────────────────────────────────────
+    public MutableLiveData<Integer> totalWorkouts = new MutableLiveData<>(0);
+    public MutableLiveData<Integer> completionPct = new MutableLiveData<>(0);
+    public MutableLiveData<Integer> currentStreak = new MutableLiveData<>(0);
+    public MutableLiveData<Integer> totalSkipped  = new MutableLiveData<>(0);
+    public MutableLiveData<String>  memberSince   = new MutableLiveData<>("");
 
-    // History list — each item is a display row
+    // History list — each item is one display row
     public MutableLiveData<List<HistoryRow>> historyRows = new MutableLiveData<>();
 
     // Activity breakdown — activityType → count
@@ -49,36 +49,29 @@ public class ProgressViewModel extends AndroidViewModel {
         isLoading.postValue(true);
         AppExecutors.getInstance().diskIO().execute(() -> {
 
-            // All logs ever
-            List<WorkoutLog> allLogs = db.workoutLogDao()
-                    .getRecentLogs(userId, 100);
-
-            // All planned workouts ever
-            // We use a wide date range — get everything from week 1
             String earliest = "2020-01-01";
             List<WorkoutLog> allLogsSince = db.workoutLogDao()
                     .getLogsSince(userId, earliest);
 
-            // Stats
-            int total    = 0;
-            int skipped  = 0;
-            int streak   = 0;
-            int maxStreak = 0;
+            int total      = 0;
+            int skipped    = 0;
             int tempStreak = 0;
+            int maxStreak  = 0;
 
             Map<String, Integer> breakdown = new HashMap<>();
-            List<HistoryRow> rows = new ArrayList<>();
+            List<HistoryRow>     rows      = new ArrayList<>();
 
             for (WorkoutLog log : allLogsSince) {
-                // Get the planned workout for context
+
+                // Find the matching planned workout for context
                 PlannedWorkout plan = db.plannedWorkoutDao()
                         .getTodayPlanSync(userId,
                                 getPlanWeekStart(log.date),
                                 getDayOfWeek(log.date));
 
-                String activityType = plan != null ? plan.activityType : "—";
-                String sessionTitle = plan != null ? plan.sessionTitle : "Workout";
-                boolean isRest      = plan != null && plan.isRestDay;
+                String  activityType = plan != null ? plan.activityType : "—";
+                String  sessionTitle = plan != null ? plan.sessionTitle  : "Workout";
+                boolean isRest       = plan != null && plan.isRestDay;
 
                 if (!isRest) {
                     if ("COMPLETED".equals(log.completionStatus)
@@ -91,36 +84,38 @@ public class ProgressViewModel extends AndroidViewModel {
                         tempStreak = 0;
                     }
 
-                    // Activity breakdown
                     if (!"—".equals(activityType)) {
                         breakdown.put(activityType,
                                 breakdown.getOrDefault(activityType, 0) + 1);
                     }
                 }
 
-                // Build history row
-                HistoryRow row = new HistoryRow();
-                row.date            = formatDisplayDate(log.date);
-                row.statusIcon      = statusIcon(log.completionStatus);
-                row.activityType    = activityType;
-                row.sessionTitle    = sessionTitle;
-                row.completionStatus = log.completionStatus;
-                row.perceivedEffort = log.perceivedEffort;
-                row.isRestDay       = isRest;
+                // ── Build history row ─────────────────────────
+                // photoPath is passed straight from WorkoutLog.
+                // The Activity will use it to load the thumbnail.
+                // If null or empty, the Activity shows the emoji icon instead.
+                HistoryRow row         = new HistoryRow();
+                row.date               = formatDisplayDate(log.date);
+                row.statusIcon         = statusIcon(log.completionStatus);
+                row.activityType       = activityType;
+                row.sessionTitle       = sessionTitle;
+                row.completionStatus   = log.completionStatus;
+                row.perceivedEffort    = log.perceivedEffort;
+                row.isRestDay          = isRest;
+                row.photoPath          = log.photoPath; // ← NEW: carry photo path through
                 rows.add(row);
             }
 
-            // Completion rate
             int totalPlanned = total + skipped;
             int pct = totalPlanned > 0
                     ? Math.round((float) total / totalPlanned * 100) : 0;
 
-            // Member since
+            // Member since date
             UserPreferences prefs = db.userPreferencesDao().getCurrentUserSync();
             String since = "";
             if (prefs != null && prefs.createdAt != null) {
                 try {
-                    SimpleDateFormat in = new SimpleDateFormat(
+                    SimpleDateFormat in  = new SimpleDateFormat(
                             "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     SimpleDateFormat out = new SimpleDateFormat(
                             "MMM d, yyyy", Locale.getDefault());
@@ -141,7 +136,8 @@ public class ProgressViewModel extends AndroidViewModel {
         });
     }
 
-    // ── Helper: get Monday of the week containing a date ────
+    // ── Date helpers ──────────────────────────────────────────
+
     private String getPlanWeekStart(String dateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(
@@ -150,22 +146,22 @@ public class ProgressViewModel extends AndroidViewModel {
             java.util.Calendar cal = java.util.Calendar.getInstance();
             cal.setTime(date);
             int dow = cal.get(java.util.Calendar.DAY_OF_WEEK);
-            int subtract = (dow == java.util.Calendar.SUNDAY) ? 6
+            int sub = (dow == java.util.Calendar.SUNDAY) ? 6
                     : dow - java.util.Calendar.MONDAY;
-            cal.add(java.util.Calendar.DAY_OF_YEAR, -subtract);
+            cal.add(java.util.Calendar.DAY_OF_YEAR, -sub);
             return sdf.format(cal.getTime());
         } catch (Exception e) {
             return PlanEngine.getCurrentWeekStart();
         }
     }
 
-    // ── Helper: get MON/TUE etc from a date string ───────────
     private String getDayOfWeek(String dateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(
                     "yyyy-MM-dd", Locale.getDefault());
             Date date = sdf.parse(dateStr);
-            SimpleDateFormat dow = new SimpleDateFormat("EEE", Locale.getDefault());
+            SimpleDateFormat dow = new SimpleDateFormat(
+                    "EEE", Locale.getDefault());
             return dow.format(date).toUpperCase(Locale.getDefault()).substring(0, 3);
         } catch (Exception e) {
             return "MON";
@@ -174,7 +170,7 @@ public class ProgressViewModel extends AndroidViewModel {
 
     private String formatDisplayDate(String dateStr) {
         try {
-            SimpleDateFormat in = new SimpleDateFormat(
+            SimpleDateFormat in  = new SimpleDateFormat(
                     "yyyy-MM-dd", Locale.getDefault());
             SimpleDateFormat out = new SimpleDateFormat(
                     "EEE, MMM d", Locale.getDefault());
@@ -193,7 +189,16 @@ public class ProgressViewModel extends AndroidViewModel {
         }
     }
 
-    // ── Data class for history rows ──────────────────────────
+    // ── HistoryRow data class ─────────────────────────────────
+    /*
+     * This is a plain data container — no logic, just fields.
+     * It exists so the ViewModel can hand the Activity everything
+     * it needs in one object, instead of the Activity juggling
+     * multiple parallel lists.
+     *
+     * photoPath is nullable — null means no photo was taken.
+     * The Activity checks for null before trying to load the image.
+     */
     public static class HistoryRow {
         public String  date;
         public String  statusIcon;
@@ -202,5 +207,6 @@ public class ProgressViewModel extends AndroidViewModel {
         public String  completionStatus;
         public int     perceivedEffort;
         public boolean isRestDay;
+        public String  photoPath;    // ← NEW: null if no photo taken
     }
 }
