@@ -2,11 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions must be OUTSIDE <application> -->
+    <!-- ── PERMISSIONS ──────────────────────────────────────── -->
+
+    <!-- Camera: for workout photo feature -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!--
+        POST_NOTIFICATIONS: required on Android 13 (API 33+) to show notifications.
+        On older Android versions this permission is granted automatically.
+        We request it at runtime in Phase 2B (full notifications system).
+        Declaring it here tells the Play Store and system what the app needs.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!--
+        RECEIVE_BOOT_COMPLETED: allows the app to reschedule alarms after
+        the device reboots. AlarmManager alarms are cleared on reboot —
+        this permission lets us listen for the boot event and reschedule.
+        We handle this in Phase 2B. Declaring now for completeness.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -18,6 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AIFitnessApp">
 
+        <!-- FileProvider for camera photo capture -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -27,6 +46,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"/>
         </provider>
+
+        <!-- ── ACTIVITIES ──────────────────────────────────── -->
 
         <activity
             android:name=".MainActivity"
@@ -64,6 +85,25 @@
         <activity
             android:name=".ui.home.WorkoutDetailActivity"
             android:exported="false"/>
+
+        <!-- ── RECEIVERS ───────────────────────────────────── -->
+
+        <!--
+            WeeklyReminderReceiver: catches the Monday alarm broadcast.
+
+            exported="false": only OUR app's AlarmManager can trigger this.
+            External apps cannot send fake broadcasts to our receiver.
+
+            The intent-filter action must match exactly what we pass
+            to AlarmManager in NotificationScheduler.
+        -->
+        <receiver
+            android:name=".receiver.WeeklyReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.aifitnessapp.WEEKLY_REMINDER"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 
