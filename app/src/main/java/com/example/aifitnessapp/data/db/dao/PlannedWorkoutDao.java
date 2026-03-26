@@ -62,4 +62,7 @@ public interface PlannedWorkoutDao {
 
     @Query("DELETE FROM planned_workouts WHERE userId = :userId AND planWeek = :week")
     void deletePlanForWeek(int userId, int week);
+
+    @Query("DELETE FROM planned_workouts")
+    void deleteAll();
 }

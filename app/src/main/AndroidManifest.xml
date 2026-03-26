@@ -90,6 +90,10 @@
             android:name=".ui.auth.AuthActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"/>
+
         <!-- ── RECEIVERS ───────────────────────────────────── -->
 
         <!--

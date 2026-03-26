@@ -19,6 +19,7 @@ import com.example.aifitnessapp.ui.coach.CoachActivity;
 import com.example.aifitnessapp.ui.log.LogActivity;
 import com.example.aifitnessapp.ui.plan.PlanActivity;
 import com.example.aifitnessapp.ui.progress.ProgressActivity;
+import com.example.aifitnessapp.ui.settings.SettingsActivity;
 import com.example.aifitnessapp.viewmodel.HomeViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -46,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvFeedLabel;
 
     // Bottom nav
-    private MaterialButton btnNavLog, btnNavPlan, btnNavProgress, btnNavCoach;
+    private MaterialButton btnNavLog, btnNavPlan, btnNavProgress, btnNavCoach, btnNavSettings;
 
     private int currentUserId = -1;
 
@@ -332,6 +333,8 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProgressActivity.class)));
         btnNavCoach.setOnClickListener(v ->
                 startActivity(new Intent(this, CoachActivity.class)));
+        btnNavSettings.setOnClickListener(v ->
+                startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     // ── View binding ──────────────────────────────────────────
@@ -356,6 +359,7 @@ public class HomeActivity extends AppCompatActivity {
         btnNavPlan       = findViewById(R.id.btnNavPlan);
         btnNavProgress   = findViewById(R.id.btnNavProgress);
         btnNavCoach      = findViewById(R.id.btnNavCoach);
+        btnNavSettings = findViewById(R.id.btnNavSettings);
     }
 
     // ── Helpers ───────────────────────────────────────────────

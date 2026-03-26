@@ -32,4 +32,7 @@ public interface WorkoutLogDao {
 
     @Query("SELECT COUNT(*) FROM workout_logs WHERE userId = :userId AND completionStatus = 'SKIPPED' AND date >= :since")
     int countSkippedSince(int userId, String since);
+
+    @Query("DELETE FROM workout_logs")
+    void deleteAll();
 }

@@ -11,7 +11,7 @@
         android:id="@+id/homeScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingBottom="100dp"
+        android:paddingBottom="80dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
@@ -67,7 +67,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- TODAY'S FOCUS CARD (full blue) -->
+            <!-- TODAY CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardToday"
                 android:layout_width="match_parent"
@@ -218,11 +218,18 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- BOTTOM NAV BAR -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  BOTTOM NAV BAR — 5 tabs, icons only                  -->
+    <!--                                                        -->
+    <!--  Icons only (no text) so 5 buttons fit comfortably.   -->
+    <!--  Each button is an emoji — no vector drawable needed.  -->
+    <!--  Active tab is highlighted with primary color tint     -->
+    <!--  in HomeActivity.java.                                 -->
+    <!-- ══════════════════════════════════════════════════════ -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomBar"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="64dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"
         app:cardElevation="8dp"
@@ -236,49 +243,80 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            android:gravity="center">
+
+            <!--
+                Each button: emoji only, equal weight, no text.
+                textSize="22sp" makes emojis large enough to tap easily.
+                minWidth="0dp" prevents Material button enforcing a minimum.
+                paddingStart/End="0dp" removes extra lateral padding.
+            -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNavLog"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="📝 Log"
-                android:textAllCaps="false"
-                android:textColor="@color/md_theme_onSurfaceVariant"/>
+                android:text="📝"
+                android:textSize="22sp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:contentDescription="Log"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNavPlan"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="📅 Plan"
-                android:textAllCaps="false"
-                android:textColor="@color/md_theme_onSurfaceVariant"/>
+                android:text="📅"
+                android:textSize="22sp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:contentDescription="Plan"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNavProgress"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="📈 Progress"
-                android:textAllCaps="false"
-                android:textColor="@color/md_theme_onSurfaceVariant"/>
+                android:text="📈"
+                android:textSize="22sp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:contentDescription="Progress"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNavCoach"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="🤖 Coach"
-                android:textAllCaps="false"
-                android:textColor="@color/md_theme_onSurfaceVariant"/>
+                android:text="🤖"
+                android:textSize="22sp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:contentDescription="Coach"/>
+
+            <!-- 5th tab: Settings -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNavSettings"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="⚙️"
+                android:textSize="22sp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:contentDescription="Settings"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

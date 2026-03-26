@@ -60,4 +60,7 @@ public interface UserDao {
     // Link user to their onboarding preferences after onboarding completes.
     @Query("UPDATE users SET preferencesId = :prefsId WHERE id = :userId")
     void updatePreferencesId(int userId, int prefsId);
+
+    @Query("DELETE FROM users")
+    void deleteAll();
 }

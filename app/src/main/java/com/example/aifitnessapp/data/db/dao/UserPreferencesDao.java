@@ -21,4 +21,7 @@ public interface UserPreferencesDao {
 
     @Query("SELECT COUNT(*) FROM user_preferences")
     int getUserCount();
+
+    @Query("DELETE FROM user_preferences")
+    void deleteAll();
 }
