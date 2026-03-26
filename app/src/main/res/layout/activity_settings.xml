@@ -92,7 +92,7 @@
                 <View android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/md_theme_outlineVariant"
-                    android:marginStart="16dp"/>
+                    android:layout_marginStart="16dp"/>
 
                 <!-- Name row (tappable) -->
                 <LinearLayout
@@ -136,7 +136,7 @@
                 <View android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/md_theme_outlineVariant"
-                    android:marginStart="16dp"/>
+                    android:layout_marginStart="16dp"/>
 
                 <!-- Weight row (tappable) -->
                 <LinearLayout
@@ -250,7 +250,7 @@
                 <View android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/md_theme_outlineVariant"
-                    android:marginStart="16dp"/>
+                    android:layout_marginStart="16dp"/>
 
                 <!-- Activities row -->
                 <LinearLayout
@@ -418,7 +418,7 @@
                 <View android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#FFCDD2"
-                    android:marginStart="16dp"/>
+                    android:layout_marginStart="16dp"/>
 
                 <!-- Clear All Data row -->
                 <LinearLayout
