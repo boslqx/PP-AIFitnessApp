@@ -58,6 +58,16 @@
             </intent-filter>
         </activity>
 
+        <!--
+            AuthActivity: the login/register screen.
+            Shown when no session exists in SharedPreferences.
+            In Phase 2C this screen will call the FastAPI auth endpoint.
+        -->
+        <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="false"/>
@@ -87,10 +97,6 @@
             android:exported="false"/>
 
         <activity
-            android:name=".ui.auth.AuthActivity"
-            android:exported="false"/>
-
-        <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"/>
 
@@ -105,11 +111,52 @@
             The intent-filter action must match exactly what we pass
             to AlarmManager in NotificationScheduler.
         -->
+        <!-- Weekly plan reminder (Monday 8am) -->
         <receiver
             android:name=".receiver.WeeklyReminderReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.example.aifitnessapp.WEEKLY_REMINDER"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Daily workout reminder (user-set time) -->
+        <receiver
+            android:name=".receiver.DailyReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.aifitnessapp.DAILY_REMINDER"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Rest day tomorrow notice (8pm daily) -->
+        <receiver
+            android:name=".receiver.RestDayReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.aifitnessapp.REST_DAY_REMINDER"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Streak reminder (7pm daily) -->
+        <receiver
+            android:name=".receiver.StreakReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.aifitnessapp.STREAK_REMINDER"/>
+            </intent-filter>
+        </receiver>
+
+        <!--
+            BootReceiver: re-schedules all alarms after device reboot.
+            exported="true" is REQUIRED — BOOT_COMPLETED is a system
+            broadcast that must cross process boundaries.
+        -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 

@@ -1,4 +1,3 @@
-// ui/home/HomeActivity.java
 package com.example.aifitnessapp.ui.home;
 
 import android.content.Intent;
@@ -9,8 +8,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.data.model.PlannedWorkout;
 import com.example.aifitnessapp.data.model.WorkoutLog;
@@ -20,10 +24,17 @@ import com.example.aifitnessapp.ui.log.LogActivity;
 import com.example.aifitnessapp.ui.plan.PlanActivity;
 import com.example.aifitnessapp.ui.progress.ProgressActivity;
 import com.example.aifitnessapp.ui.settings.SettingsActivity;
+import com.example.aifitnessapp.util.NotificationPreferences;
+import com.example.aifitnessapp.util.NotificationScheduler;
 import com.example.aifitnessapp.viewmodel.HomeViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -50,11 +61,16 @@ public class HomeActivity extends AppCompatActivity {
     private MaterialButton btnNavLog, btnNavPlan, btnNavProgress, btnNavCoach, btnNavSettings;
 
     private int currentUserId = -1;
+    private ActivityResultLauncher<String> notifPermissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // Notification permission handling (must be called before any notification scheduling)
+        registerNotificationPermissionLauncher();
+        requestNotificationPermissionIfNeeded();
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -426,5 +442,74 @@ public class HomeActivity extends AppCompatActivity {
             if (order[i].equals(today)) t = i;
         }
         return d < t;
+    }
+
+    // ── Notification permission handling (Android 13+) ───────
+
+    /*
+     * registerForActivityResult() MUST be called before onCreate completes
+     * (before the Activity starts). That's why we register in a separate
+     * method called at the top of onCreate, not inside a click handler.
+     *
+     * The ActivityResultLauncher replaces the old startActivityForResult()
+     * pattern. When the user responds to the permission dialog, the lambda
+     * receives `granted` (true/false).
+     */
+    private void registerNotificationPermissionLauncher() {
+        notifPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                granted -> {
+                    // Mark as asked regardless of result so we don't ask again
+                    new NotificationPreferences(this).markPermissionAsked();
+                    if (granted) {
+                        // Permission granted — schedule default notifications
+                        NotificationScheduler.scheduleAllFromPreferences(this);
+                    }
+                    // If denied, notifications simply won't fire. User can
+                    // enable them later via device Settings. We don't pester.
+                });
+    }
+
+    /*
+     * Requests POST_NOTIFICATIONS permission on Android 13+ (API 33+).
+     * On older versions the permission is granted automatically — skip.
+     *
+     * Only asks ONCE — after that, NotificationPreferences.wasPermissionAsked()
+     * returns true and we never show the dialog again.
+     *
+     * If already granted (user approved before), just schedule directly.
+     */
+    private void requestNotificationPermissionIfNeeded() {
+        // Only needed on Android 13+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            // On older Android, just schedule everything
+            NotificationScheduler.scheduleAllFromPreferences(this);
+            return;
+        }
+
+        NotificationPreferences notifPrefs = new NotificationPreferences(this);
+
+        // Already asked before — don't ask again
+        if (notifPrefs.wasPermissionAsked()) {
+            // If they granted it before, reschedule in case of reboot
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                NotificationScheduler.scheduleAllFromPreferences(this);
+            }
+            return;
+        }
+
+        // First time — check current status
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Already granted (shouldn't happen on first open but handle it)
+            notifPrefs.markPermissionAsked();
+            NotificationScheduler.scheduleAllFromPreferences(this);
+        } else {
+            // Launch the system permission dialog
+            notifPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 }

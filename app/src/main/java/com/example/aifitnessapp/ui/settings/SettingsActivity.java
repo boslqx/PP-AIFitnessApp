@@ -3,20 +3,25 @@ package com.example.aifitnessapp.ui.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.data.model.UserPreferences;
 import com.example.aifitnessapp.ui.auth.AuthActivity;
 import com.example.aifitnessapp.ui.onboarding.OnboardingActivity;
+import com.example.aifitnessapp.util.NotificationPreferences;
+import com.example.aifitnessapp.util.NotificationScheduler;
 import com.example.aifitnessapp.viewmodel.SettingsViewModel;
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +35,9 @@ public class SettingsActivity extends AppCompatActivity {
     private LinearLayout rowName, rowWeight, rowGoal, rowActivities;
     private LinearLayout rowResetPlan, rowLogout, rowClearData;
     private ProgressBar  pbSettings;
+    private SwitchCompat switchDaily, switchRestDay, switchWeekly, switchStreak;
+    private TextView tvNotifDailyTime;
+    private NotificationPreferences notifPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +56,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  OBSERVE VIEWMODEL
-    //
-    //  Three things to watch:
-    //  1. currentPrefs → populate all setting rows with current values
-    //  2. saveResult   → show success toast
-    //  3. errorMessage → show error toast
-    //  4. clearResult  → navigate to onboarding after wipe
-    //  5. isLoading    → show/hide spinner
     // ─────────────────────────────────────────────────────────
     private void observeViewModel() {
+
+        loadNotificationPreferences();   // loads switches AND reschedules alarms
 
         // Populate rows when prefs load
         viewModel.currentPrefs.observe(this, prefs -> {
@@ -99,9 +102,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  POPULATE ROWS
-    //
-    //  Called whenever currentPrefs updates.
-    //  Maps UserPreferences fields to human-readable strings.
     // ─────────────────────────────────────────────────────────
     private void populateRows(UserPreferences prefs) {
         tvSettingsName.setText(prefs.name != null ? prefs.name : "—");
@@ -122,6 +122,7 @@ public class SettingsActivity extends AppCompatActivity {
         rowResetPlan.setOnClickListener(v -> showResetPlanDialog());
         rowLogout.setOnClickListener(v -> showLogoutDialog());
         rowClearData.setOnClickListener(v -> showClearDataDialog());
+        setupNotificationSwitches();
     }
 
     // ─────────────────────────────────────────────────────────
@@ -189,9 +190,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  DIALOG 3: EDIT FITNESS GOAL
-    //
-    //  Radio buttons for 4 goal options.
-    //  On confirm → show scope dialog (this week or next week).
     // ─────────────────────────────────────────────────────────
     private void showEditGoalDialog() {
         final String[] goalKeys   = {"LOSE_FAT", "BUILD_MUSCLE",
@@ -238,10 +236,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  DIALOG 4: EDIT ACTIVITIES
-    //
-    //  Checkboxes for 8 activity types.
-    //  Must select at least one.
-    //  On confirm → scope dialog.
     // ─────────────────────────────────────────────────────────
     private void showEditActivitiesDialog() {
         final String[] activityKeys   = {"GYM", "RUNNING", "BOULDERING",
@@ -292,18 +286,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  SCOPE DIALOG
-    //
-    //  "Apply now or from next week?"
-    //  Shown after goal or activities change.
-    //
-    //  Takes a ScopeAction (functional interface) so the same
-    //  dialog works for both goal and activity changes.
-    //  The caller passes in what to do with the boolean result.
-    //
-    //  WHY a custom functional interface instead of Runnable?
-    //  We need to pass ONE boolean to the action (applyNow).
-    //  Runnable takes no parameters. So we define a simple
-    //  single-method interface that takes a boolean.
     // ─────────────────────────────────────────────────────────
     interface ScopeAction {
         void execute(boolean applyNow);
@@ -325,8 +307,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  RESET PLAN DIALOG
-    //
-    //  Single confirmation step — clearly explains what happens.
     // ─────────────────────────────────────────────────────────
     private void showResetPlanDialog() {
         new AlertDialog.Builder(this)
@@ -343,8 +323,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  LOG OUT DIALOG
-    //
-    //  Single confirmation — not a danger action, just clarifying.
     // ─────────────────────────────────────────────────────────
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
@@ -364,15 +342,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ─────────────────────────────────────────────────────────
     //  CLEAR ALL DATA DIALOG — double confirmation
-    //
-    //  Two-step because this is irreversible.
-    //  Step 1: warn the user
-    //  Step 2: ask them to confirm again with a more explicit question
-    //
-    //  WHY two steps?
-    //  A single tap on "Clear All Data" could be accidental.
-    //  Two distinct dialogs with different wording ensure the user
-    //  has genuinely read and understood what they're doing.
     // ─────────────────────────────────────────────────────────
     private void showClearDataDialog() {
         // Step 1 — first warning
@@ -401,7 +370,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // ── View binding ──────────────────────────────────────────
-
     private void bindViews() {
         tvSettingsEmail      = findViewById(R.id.tvSettingsEmail);
         tvSettingsName       = findViewById(R.id.tvSettingsName);
@@ -416,10 +384,15 @@ public class SettingsActivity extends AppCompatActivity {
         rowLogout            = findViewById(R.id.rowSettingsLogout);
         rowClearData         = findViewById(R.id.rowSettingsClearData);
         pbSettings           = findViewById(R.id.pbSettings);
+        switchDaily       = findViewById(R.id.switchNotifDaily);
+        switchRestDay     = findViewById(R.id.switchNotifRestDay);
+        switchWeekly      = findViewById(R.id.switchNotifWeekly);
+        switchStreak      = findViewById(R.id.switchNotifStreak);
+        tvNotifDailyTime  = findViewById(R.id.tvNotifDailyTime);
+        notifPrefs        = new NotificationPreferences(this);
     }
 
     // ── Display helpers ───────────────────────────────────────
-
     private String formatGoal(String goal) {
         if (goal == null) return "—";
         switch (goal) {
@@ -431,11 +404,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     * Converts "GYM,RUNNING,BOULDERING" → "Gym, Running, Bouldering"
-     * Truncates to 2 items + "..." if more than 2 selected,
-     * so the row value doesn't overflow on small screens.
-     */
     private String formatActivities(String activitiesStr) {
         if (activitiesStr == null || activitiesStr.isEmpty()) return "—";
         String[] parts = activitiesStr.split(",");
@@ -461,6 +429,155 @@ public class SettingsActivity extends AppCompatActivity {
             case "HOME":       return "Home";
             case "SPORTS":     return "Sports";
             default:           return type;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    //  NOTIFICATION METHODS (FIXED)
+    // ─────────────────────────────────────────────────────────
+
+    /*
+     * Loads saved notification preferences and sets switch states.
+     * Then reschedules any enabled alarms to ensure they are active
+     * after app restart or device reboot.
+     */
+    private void loadNotificationPreferences() {
+        // Set switch states from saved preferences
+        switchDaily.setChecked(notifPrefs.isDailyEnabled());
+        switchRestDay.setChecked(notifPrefs.isRestDayEnabled());
+        switchWeekly.setChecked(notifPrefs.isWeeklyEnabled());
+        switchStreak.setChecked(notifPrefs.isStreakEnabled());
+
+        // Update the daily time label
+        updateDailyTimeLabel();
+
+        // Reschedule all enabled alarms (restores state after process death/reboot)
+        if (notifPrefs.isDailyEnabled()) {
+            NotificationScheduler.scheduleDailyReminder(this,
+                    notifPrefs.getDailyHour(), notifPrefs.getDailyMinute());
+        }
+        if (notifPrefs.isRestDayEnabled()) {
+            NotificationScheduler.scheduleRestDayReminder(this);
+        }
+        if (notifPrefs.isWeeklyEnabled()) {
+            NotificationScheduler.scheduleWeeklyReminder(this);
+        }
+        if (notifPrefs.isStreakEnabled()) {
+            NotificationScheduler.scheduleStreakReminder(this);
+        }
+    }
+
+    /*
+     * Attaches listeners to all notification switches.
+     * Daily switch now uses a callback to handle user cancellation properly.
+     */
+    private void setupNotificationSwitches() {
+
+        // ── Daily reminder switch ─────────────────────────────
+        switchDaily.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                // Show time picker; only enable if user confirms
+                showDailyTimePickerWithCallback(
+                        () -> {
+                            // Success: save preference (time already saved in picker)
+                            notifPrefs.setDailyEnabled(true);
+                        },
+                        () -> {
+                            // Cancel: revert switch and preference
+                            switchDaily.setChecked(false);
+                            notifPrefs.setDailyEnabled(false);
+                            tvNotifDailyTime.setText("Off");
+                        }
+                );
+            } else {
+                // Turned off explicitly
+                notifPrefs.setDailyEnabled(false);
+                NotificationScheduler.cancelDailyReminder(this);
+                tvNotifDailyTime.setText("Off");
+            }
+        });
+
+        // Tap the daily row (not just the switch) to change time
+        findViewById(R.id.rowNotifDaily).setOnClickListener(v -> {
+            if (notifPrefs.isDailyEnabled()) {
+                showDailyTimePickerWithCallback(
+                        () -> {
+                            // already saved by picker
+                        },
+                        null // no special cancel action needed when manually opening picker
+                );
+            } else {
+                switchDaily.setChecked(true); // turning on triggers the listener above
+            }
+        });
+
+        // ── Rest day switch ───────────────────────────────────
+        switchRestDay.setOnCheckedChangeListener((btn, isChecked) -> {
+            notifPrefs.setRestDayEnabled(isChecked);
+            if (isChecked) {
+                NotificationScheduler.scheduleRestDayReminder(this);
+            } else {
+                NotificationScheduler.cancelRestDayReminder(this);
+            }
+        });
+
+        // ── Weekly switch ─────────────────────────────────────
+        switchWeekly.setOnCheckedChangeListener((btn, isChecked) -> {
+            notifPrefs.setWeeklyEnabled(isChecked);
+            if (isChecked) {
+                NotificationScheduler.scheduleWeeklyReminder(this);
+            } else {
+                NotificationScheduler.cancelWeeklyReminder(this);
+            }
+        });
+
+        // ── Streak switch ─────────────────────────────────────
+        switchStreak.setOnCheckedChangeListener((btn, isChecked) -> {
+            notifPrefs.setStreakEnabled(isChecked);
+            if (isChecked) {
+                NotificationScheduler.scheduleStreakReminder(this);
+            } else {
+                NotificationScheduler.cancelStreakReminder(this);
+            }
+        });
+    }
+
+    /*
+     * Shows time picker with callbacks for success and cancellation.
+     * @param onSuccess called when user picks a time (time is already saved)
+     * @param onCancel called if the user dismisses the dialog without picking
+     */
+    private void showDailyTimePickerWithCallback(Runnable onSuccess, Runnable onCancel) {
+        int currentHour   = notifPrefs.getDailyHour();
+        int currentMinute = notifPrefs.getDailyMinute();
+
+        android.app.TimePickerDialog picker = new android.app.TimePickerDialog(
+                this,
+                (view, hourOfDay, minute) -> {
+                    // Save new time
+                    notifPrefs.setDailyTime(hourOfDay, minute);
+                    // Reschedule alarm at new time
+                    NotificationScheduler.scheduleDailyReminder(this, hourOfDay, minute);
+                    // Update label
+                    updateDailyTimeLabel();
+                    if (onSuccess != null) onSuccess.run();
+                },
+                currentHour,
+                currentMinute,
+                false // 12-hour format with AM/PM
+        );
+        picker.setTitle("Reminder time");
+        picker.setOnCancelListener(dialog -> {
+            if (onCancel != null) onCancel.run();
+        });
+        picker.show();
+    }
+
+    private void updateDailyTimeLabel() {
+        if (notifPrefs.isDailyEnabled()) {
+            tvNotifDailyTime.setText(notifPrefs.getDailyTimeLabel());
+        } else {
+            tvNotifDailyTime.setText("Off");
         }
     }
 }
