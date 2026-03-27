@@ -630,4 +630,18 @@
             android:visibility="gone"/>
 
     </LinearLayout>
+
+    <!-- BACK BUTTON -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBackFromSettings"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="← Back to Home"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.core.widget.NestedScrollView>

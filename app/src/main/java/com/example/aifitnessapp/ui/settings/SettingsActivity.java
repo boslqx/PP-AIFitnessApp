@@ -16,10 +16,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.aifitnessapp.R;
 import com.example.aifitnessapp.data.model.UserPreferences;
 import com.example.aifitnessapp.ui.auth.AuthActivity;
+import com.example.aifitnessapp.ui.home.HomeActivity;
 import com.example.aifitnessapp.ui.onboarding.OnboardingActivity;
 import com.example.aifitnessapp.util.NotificationPreferences;
 import com.example.aifitnessapp.util.NotificationScheduler;
 import com.example.aifitnessapp.viewmodel.SettingsViewModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
     private SwitchCompat switchDaily, switchRestDay, switchWeekly, switchStreak;
     private TextView tvNotifDailyTime;
     private NotificationPreferences notifPrefs;
+    private MaterialButton btnBackFromSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,11 @@ public class SettingsActivity extends AppCompatActivity {
         bindViews();
         setupRowClicks();
         observeViewModel();
+
+        btnBackFromSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
 
         // Load current settings data
         viewModel.loadSettings();
@@ -390,6 +398,7 @@ public class SettingsActivity extends AppCompatActivity {
         switchStreak      = findViewById(R.id.switchNotifStreak);
         tvNotifDailyTime  = findViewById(R.id.tvNotifDailyTime);
         notifPrefs        = new NotificationPreferences(this);
+        btnBackFromSettings = findViewById(R.id.btnBackFromSettings);
     }
 
     // ── Display helpers ───────────────────────────────────────
